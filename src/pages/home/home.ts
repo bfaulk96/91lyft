@@ -1,11 +1,11 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {Geolocation} from '@ionic-native/geolocation';
 import {AgmMap} from "@agm/core";
 import {Diagnostic} from '@ionic-native/diagnostic';
 import {MyApp} from "../../app/app";
 
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {AuthenticationService} from "../../services/authentication.service";
 import {LoginPage} from "../login/login";
 
@@ -76,8 +76,8 @@ export class HomePage implements OnInit {
         this.http.get<any>("https://maps.googleapis.com/maps/api/place/textsearch/json?" + queryString)
           .subscribe((data): void => {
               if (data.results) {
-                console.log(data.results[0].geometry.location);
-                this.urgentCareLatLng = data.results[0].geometry.location;
+                const closestResult = this.findClosestResult(data.results);
+                this.urgentCareLatLng = closestResult.geometry.location;
                 resolve(true);
               } else {
                 resolve(false);
@@ -89,6 +89,23 @@ export class HomePage implements OnInit {
           );
       }
     );
+  }
+
+  findClosestResult(results: Array<any>): any {
+    let closestDistance = Infinity;
+    let closestResult = results[0];
+
+    results.forEach(
+      (result: any, i: number): void => {
+        const currentDistance = Math.abs(this.currentLoc.lat - result.geometry.location.lat) + Math.abs(this.currentLoc.lng - result.geometry.location.lng);
+        if (currentDistance < closestDistance) {
+          closestDistance = currentDistance;
+          closestResult = result;
+        }
+      }
+    );
+
+    return closestResult;
   }
 
   callARide(): void {
