@@ -15,8 +15,8 @@ import {Diagnostic} from "@ionic-native/diagnostic";
 export class MyApp implements OnInit {
   // rootPage: any = HomePage;
   // rootPage: any = LandingPage;
-  static readonly USING_BROWSER = false;
-  static readonly MAPS_API_KEY = 'AIzaSyD3FgRTJxRDFpFgYWvrbQ9RpgITNs1KgvY';
+  static readonly USING_BROWSER = true;
+  static readonly MAPS_API_KEY = 'AIzaSyAuOVKs2NJGRrAnfEDgYULK68X_xk7k4KU';
   rootPage: any = LoginPage;
 
   constructor(private platform: Platform,
@@ -50,4 +50,3 @@ export class MyApp implements OnInit {
   ngOnInit(): void {
   }
 }
-

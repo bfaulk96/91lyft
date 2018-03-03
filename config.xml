@@ -80,8 +80,6 @@
             <string>To send your most recent location to Lyft</string>
         </edit-config>
     </platform>
-    <engine name="android" spec="^6.2.3" />
-    <engine name="ios" spec="4.5.4" />
     <plugin name="cordova-plugin-device" spec="^2.0.1" />
     <plugin name="cordova-plugin-geolocation" spec="^4.0.1">
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="To send your most recent location to Lyft" />
@@ -92,4 +90,6 @@
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.0" />
+    <engine name="android" spec="^6.2.3" />
+    <engine name="ios" spec="4.5.4" />
 </widget>

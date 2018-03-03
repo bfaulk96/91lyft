@@ -3,11 +3,11 @@ import {NavController} from 'ionic-angular';
 import {Geolocation} from '@ionic-native/geolocation';
 import {AgmMap} from "@agm/core";
 import {Diagnostic} from '@ionic-native/diagnostic';
-import {MyApp} from "../../app/app";
 
 import {HttpClient} from "@angular/common/http";
 import {AuthenticationService} from "../../services/authentication.service";
 import {LoginPage} from "../login/login";
+import {GeoCodeLocation, GoogleMapsClient, GooglePlaceSearchResponse, ResultsItemType} from "../../app/app.api";
 
 @Component({
   selector: 'page-home',
@@ -25,7 +25,8 @@ export class HomePage implements OnInit {
               private diagnostic: Diagnostic,
               private geolocation: Geolocation,
               private http: HttpClient,
-              private authenticationService: AuthenticationService) {
+              private authenticationService: AuthenticationService,
+              private googleMapsClient: GoogleMapsClient) {
   }
 
   ngOnInit(): void {
@@ -34,11 +35,7 @@ export class HomePage implements OnInit {
 
   ionViewDidLoad() {
     this.setGeoLocation();
-    this.getNearbyUrgentCare().then((): void => {
-    }, (error: Error): void => {
-      console.error(error);
-      this.displayMap = true;
-    });
+    this.getNearbyUrgentCare();
   }
 
   setGeoLocation() {
@@ -51,36 +48,28 @@ export class HomePage implements OnInit {
     });
   }
 
-  getNearbyUrgentCare(): Promise<boolean> {
-    return new Promise<boolean>(
-      (resolve: Function, reject: Function): void => {
-        const queryString: string = "query=urgent care&key=" + MyApp.MAPS_API_KEY + "&location=" +
-          this.currentLoc.lat + "," + this.currentLoc.lng + "&radius=50000&opennow=true";
-        this.http.get<any>("https://maps.googleapis.com/maps/api/place/textsearch/json?" + queryString)
-          .subscribe((data): void => {
-              if (data.results) {
-                const closestResult = this.findClosestResult(data.results);
-                this.urgentCareLatLng = closestResult.geometry.location;
-                resolve(true);
-              } else {
-                resolve(false);
-              }
-            }, (error: Error): void => {
-              console.error(error);
-              reject();
-            }
-          );
+  getNearbyUrgentCare(): void {
+    this.googleMapsClient.getUrgentCares(new GeoCodeLocation({lat: this.currentLoc.lat, lng: this.currentLoc.lng})).subscribe(
+      (data: GooglePlaceSearchResponse): void => {
+        console.log(this.currentLoc);
+        console.log(data);
+        if (data.results) {
+          const closestResult = this.findClosestResult(data.results);
+          this.urgentCareLatLng = closestResult.geometry.location;
+        }
       }
     );
   }
 
-  findClosestResult(results: Array<any>): any {
+  findClosestResult(results: Array<ResultsItemType>): ResultsItemType {
     let closestDistance = Infinity;
     let closestResult = results[0];
 
     results.forEach(
-      (result: any, i: number): void => {
+      (result: ResultsItemType, i: number): void => {
         const currentDistance = Math.abs(this.currentLoc.lat - result.geometry.location.lat) + Math.abs(this.currentLoc.lng - result.geometry.location.lng);
+        console.log(currentDistance);
+        console.log(result);
         if (currentDistance < closestDistance) {
           closestDistance = currentDistance;
           closestResult = result;
