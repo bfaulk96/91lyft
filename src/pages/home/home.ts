@@ -7,7 +7,7 @@ import {Diagnostic} from '@ionic-native/diagnostic';
 import {HttpClient} from "@angular/common/http";
 import {AuthenticationService} from "../../services/authentication.service";
 import {LoginPage} from "../login/login";
-import {GeoCodeLocation, GoogleMapsClient, GooglePlaceSearchResponse, ResultsItemType} from "../../app/app.api";
+import {GeoCodeLocation, GoogleMapsClient, GooglePlaceSearchResponse, LyftClient, ResultsItemType, RideRequestParams, RideResponseParams} from "../../app/app.api";
 
 @Component({
   selector: 'page-home',
@@ -26,7 +26,8 @@ export class HomePage implements OnInit {
               private geolocation: Geolocation,
               private http: HttpClient,
               private authenticationService: AuthenticationService,
-              private googleMapsClient: GoogleMapsClient) {
+              private googleMapsClient: GoogleMapsClient,
+              private lyftClient: LyftClient) {
   }
 
   ngOnInit(): void {
@@ -40,7 +41,6 @@ export class HomePage implements OnInit {
 
   setGeoLocation() {
     this.geolocation.getCurrentPosition().then((position) => {
-      console.log(position);
       this.currentLoc.lat = position.coords.latitude;
       this.currentLoc.lng = position.coords.longitude;
       this.displayMap = true;
@@ -78,6 +78,26 @@ export class HomePage implements OnInit {
   }
 
   callARide(): void {
+    this.lyftClient.lyftRideRequest(
+      new RideRequestParams({
+        origin: new GeoCodeLocation({
+          lat: this.currentLoc.lat,
+          lng: this.currentLoc.lng
+        }),
+        destination: new GeoCodeLocation({
+          lat: this.urgentCareLatLng.lat,
+          lng: this.urgentCareLatLng.lng
+        }),
+        ride_type: "Lyft"
+      })
+    ).subscribe(
+      (rideResponseParams: RideResponseParams): void => {
+        console.log(rideResponseParams);
+      },
+      (error: Error): void => {
+        console.error(error);
+      }
+    );
   }
 
   logout(): void {

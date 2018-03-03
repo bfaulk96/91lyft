@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable} from "@angular/core";
 import {AuthenticationToken} from "./authentication-token.model";
-import {SwaggerException, UserClient, UserLoginParams, UserLoginResponse} from "../app/app.api";
+import {UserClient, UserLoginParams, UserLoginResponse} from "../app/app.api";
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/catch'
 
@@ -12,7 +12,6 @@ export class AuthenticationService {
   public constructor(private userClient: UserClient) {
     const rawAuthenticationToken = localStorage.getItem(AuthenticationToken.STORAGE_KEY);
     if (rawAuthenticationToken != undefined && rawAuthenticationToken != "undefined" && rawAuthenticationToken != null && rawAuthenticationToken != "null") {
-      console.log(rawAuthenticationToken);
       if (AuthenticationToken.isValid(rawAuthenticationToken)) {
         this.loggedInStatus.emit(true);
         this.isLoggedIn = true;
@@ -31,7 +30,7 @@ export class AuthenticationService {
   public login(username: string, password: string): Observable<UserLoginResponse> {
     return this.userClient.login(new UserLoginParams({username: username, password: password})).map(
       (userLoginResponse: UserLoginResponse): any => {
-        localStorage.setItem(AuthenticationToken.STORAGE_KEY, JSON.stringify(new AuthenticationToken()));
+        localStorage.setItem(AuthenticationToken.STORAGE_KEY, JSON.stringify(new AuthenticationToken(userLoginResponse.authToken, userLoginResponse.user)));
         this.loggedInStatus.emit(true);
         this.isLoggedIn = true;
         return userLoginResponse;

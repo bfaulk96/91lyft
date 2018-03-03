@@ -15,7 +15,7 @@ import {LocationAccuracy} from "@ionic-native/location-accuracy";
 import {AuthenticationService} from "../services/authentication.service";
 import {LoginPage} from "../pages/login/login";
 import {LoginPageModule} from "../pages/login/login.module";
-import {API_BASE_URL, GoogleMapsClient, UserClient} from './app.api';
+import {API_BASE_URL, GoogleMapsClient, LyftClient, UserClient} from './app.api';
 
 @NgModule({
   declarations: [
@@ -52,7 +52,8 @@ import {API_BASE_URL, GoogleMapsClient, UserClient} from './app.api';
         {provide: API_BASE_URL, useFactory: baseUrl},
     AuthenticationService,
     UserClient,
-    GoogleMapsClient
+    GoogleMapsClient,
+    LyftClient
   ]
 })
 
