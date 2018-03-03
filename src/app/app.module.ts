@@ -54,6 +54,7 @@ import {API_BASE_URL, UserClient} from './app.api';
     UserClient
   ]
 })
+
 export class AppModule {
 }
 

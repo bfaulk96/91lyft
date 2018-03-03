@@ -20,12 +20,6 @@ export class HomePage implements OnInit {
   urgentCareLatLng: { lat: number, lng: number } = {lat: this.currentLoc.lat, lng: this.currentLoc.lng};
   zoom: number = 14;
   displayMap: boolean = false;
-  // center: LatLngLiteral;
-  // markers: any;
-  // mapOptions: any;
-  // meters: any = 10000;
-  // directionsService = new google.maps.DirectionsService;
-  // directionsDisplay = new google.maps.DirectionsRenderer;
 
   constructor(private navController: NavController,
               private diagnostic: Diagnostic,
@@ -39,30 +33,19 @@ export class HomePage implements OnInit {
 
 
   ionViewDidLoad() {
-    if (!MyApp.USING_BROWSER) {
-      this.diagnostic.getLocationAuthorizationStatus().then((status) => {
-        if (status === this.diagnostic.permissionStatus.GRANTED ||
-          status === this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) {
-          this.setGeoLocation();
-        } else {
-          alert("Location must be enabled to use this app.");
-          this.diagnostic.switchToLocationSettings();
-        }
-      });
-    } else {
-      this.setGeoLocation();
-      this.getNearbyUrgentCare().then((): void => {
-        this.displayMap = true;
-      }, (error: Error): void => {
-        console.error(error);
-      });
-    }
+    this.setGeoLocation();
+    this.getNearbyUrgentCare().then((): void => {
+    }, (error: Error): void => {
+      console.error(error);
+      this.displayMap = true;
+    });
   }
 
   setGeoLocation() {
     this.geolocation.getCurrentPosition().then((position) => {
       this.currentLoc.lat = position.coords.latitude;
       this.currentLoc.lng = position.coords.longitude;
+      this.displayMap = true;
     }, (err) => {
       alert(err);
     });
@@ -115,36 +98,4 @@ export class HomePage implements OnInit {
     this.authenticationService.logout();
     this.navController.setRoot(LoginPage);
   }
-
-  // loadMap(){
-  //   this.geolocation.getCurrentPosition().then((position) => {
-  //     let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-  //     console.log('latLng', latLng);
-  //     this.mapOptions = {
-  //       center: this.latLng,
-  //       zoom: 14,
-  //       mapTypeId: google.maps.MapTypeId.ROADMAP
-  //     };
-  //     this.map = new google.maps.Map(this.mapElement.nativeElement, this.mapOptions);
-  //     this.directionsDisplay.setMap(this.map);
-  //     this.calculateAndDisplayRoute(this.latLng, "urgent care")
-  //   }, (err) => {
-  //     alert('err ' + err);
-  //   });
-  //
-  // }
-  //
-  // calculateAndDisplayRoute(start, end) {
-  //   this.directionsService.route({
-  //     origin: start,
-  //     destination: end,
-  //     travelMode: google.maps.TravelMode.DRIVING
-  //   }, (response, status) => {
-  //     if (status === 'OK') {
-  //       this.directionsDisplay.setDirections(response);
-  //     } else {
-  //       alert('Directions request failed due to ' + status);
-  //     }
-  //   });
-  // }
 }
