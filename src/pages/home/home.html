@@ -25,6 +25,6 @@
 </ion-content>
 <ion-footer class="footer">
   <ion-row align-items-center justify-content-center>
-    <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()">Call a Ride!</button>
+    <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || rideRequested">{{rideStatus}}</button>
   </ion-row>
 </ion-footer>
