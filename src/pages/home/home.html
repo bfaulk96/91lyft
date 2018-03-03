@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title align-items-center justify-content-center class="text-center">
+      <img src="./assets/imgs/91lyft-v3.png" class="nav-img">
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content class="map-card" align-items-center justify-content-center>
+  <ion-row align-items-center justify-content-center>
+    <h1>Need a lyft to urgent care?</h1>
+  </ion-row>
+  <ion-card *ngIf="displayMap" class="map-wrapper" align-items-center justify-content-center>
+    <agm-map>
+      <agm-direction [origin]="currentLoc" [destination]="urgentCareLatLng"></agm-direction>
+    </agm-map>
+  </ion-card>
+  <ion-card *ngIf="!displayMap" class="spinner" align-items-center justify-content-center>
+    <img src="./assets/imgs/loading-spinner.svg">
+  </ion-card>
+</ion-content>
+<ion-footer class="footer">
+  <ion-row align-items-center justify-content-center>
+    <button ion-button large color="primary" class="lyft-btn">Call a Ride!</button>
+  </ion-row>
+</ion-footer>

@@ -1,0 +1,42 @@
+page-home {
+  .home-body{
+    width: 100%;
+    text-align: center;
+  }
+
+  .map-card {
+    padding: 0 !important;
+    text-align: center;
+
+    ion-item {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  .spinner {
+    min-height: 300px;
+  }
+
+  agm-map {
+    height: 300px;
+  }
+
+  .lyft-btn {
+    width: 90%;
+    height: 80px;
+    font-size: 2em;
+  }
+
+  ion-content {
+    border-bottom: none !important;
+  }
+
+  ion-footer {
+    border-top: none !important;
+  }
+
+  .footer {
+    margin-bottom: 15px;
+  }
+}
