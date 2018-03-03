@@ -40,6 +40,7 @@ export class HomePage implements OnInit {
 
   setGeoLocation() {
     this.geolocation.getCurrentPosition().then((position) => {
+      console.log(position);
       this.currentLoc.lat = position.coords.latitude;
       this.currentLoc.lng = position.coords.longitude;
       this.displayMap = true;
@@ -50,11 +51,9 @@ export class HomePage implements OnInit {
 
   getNearbyUrgentCare(): void {
     this.googleMapsClient.getUrgentCares(new GeoCodeLocation({lat: this.currentLoc.lat, lng: this.currentLoc.lng})).subscribe(
-      (data: GooglePlaceSearchResponse): void => {
-        console.log(this.currentLoc);
-        console.log(data);
-        if (data.results) {
-          const closestResult = this.findClosestResult(data.results);
+      (googlePlaceSearchResponse: GooglePlaceSearchResponse): void => {
+        if (googlePlaceSearchResponse.results) {
+          const closestResult = this.findClosestResult(googlePlaceSearchResponse.results);
           this.urgentCareLatLng = closestResult.geometry.location;
         }
       }
@@ -66,10 +65,8 @@ export class HomePage implements OnInit {
     let closestResult = results[0];
 
     results.forEach(
-      (result: ResultsItemType, i: number): void => {
+      (result: ResultsItemType): void => {
         const currentDistance = Math.abs(this.currentLoc.lat - result.geometry.location.lat) + Math.abs(this.currentLoc.lng - result.geometry.location.lng);
-        console.log(currentDistance);
-        console.log(result);
         if (currentDistance < closestDistance) {
           closestDistance = currentDistance;
           closestResult = result;
