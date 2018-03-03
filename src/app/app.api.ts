@@ -24,6 +24,76 @@ import { BaseClient } from './services/base-client.service';
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 @Injectable()
+export class GoogleMapsClient extends BaseClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        super();
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Ok
+     */
+    getUrgentCares(latLngParams: GeoCodeLocation): Observable<GooglePlaceSearchResponse> {
+        let url_ = this.baseUrl + "/googles/get-urgent-cares";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(latLngParams);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return Observable.fromPromise(this.transformOptions(options_)).flatMap(transformedOptions_ => {
+            return this.http.request("post", url_, transformedOptions_);
+        }).flatMap((response_: any) => {
+            return this.processGetUrgentCares(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUrgentCares(<any>response_);
+                } catch (e) {
+                    return <Observable<GooglePlaceSearchResponse>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<GooglePlaceSearchResponse>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processGetUrgentCares(response: HttpResponseBase): Observable<GooglePlaceSearchResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).flatMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GooglePlaceSearchResponse.fromJS(resultData200) : new GooglePlaceSearchResponse();
+            return Observable.of(result200);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).flatMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Observable.of<GooglePlaceSearchResponse>(<any>null);
+    }
+}
+
+@Injectable()
 export class LyftClient extends BaseClient {
     private http: HttpClient;
     private baseUrl: string;
@@ -287,6 +357,414 @@ export class UserClient extends BaseClient {
     }
 }
 
+export class LocationType implements ILocationType {
+    lat: number;
+    lng: number;
+
+    constructor(data?: ILocationType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.lat = data["lat"] !== undefined ? data["lat"] : <any>null;
+            this.lng = data["lng"] !== undefined ? data["lng"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): LocationType {
+        data = typeof data === 'object' ? data : {};
+        let result = new LocationType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lat"] = this.lat !== undefined ? this.lat : <any>null;
+        data["lng"] = this.lng !== undefined ? this.lng : <any>null;
+        return data; 
+    }
+}
+
+export interface ILocationType {
+    lat: number;
+    lng: number;
+}
+
+export class GeometryType implements IGeometryType {
+    location: LocationType = new LocationType();
+
+    constructor(data?: IGeometryType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.location = data["location"] ? LocationType.fromJS(data["location"]) : new LocationType();
+        }
+    }
+
+    static fromJS(data: any): GeometryType {
+        data = typeof data === 'object' ? data : {};
+        let result = new GeometryType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["location"] = this.location ? this.location.toJSON() : <any>null;
+        return data; 
+    }
+}
+
+export interface IGeometryType {
+    location: LocationType;
+}
+
+export class OpeningHoursType implements IOpeningHoursType {
+    open_now: boolean;
+
+    constructor(data?: IOpeningHoursType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.open_now = data["open_now"] !== undefined ? data["open_now"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): OpeningHoursType {
+        data = typeof data === 'object' ? data : {};
+        let result = new OpeningHoursType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["open_now"] = this.open_now !== undefined ? this.open_now : <any>null;
+        return data; 
+    }
+}
+
+export interface IOpeningHoursType {
+    open_now: boolean;
+}
+
+export class PhotosItemType implements IPhotosItemType {
+    height: number;
+    html_attributions: any = {};
+    photo_reference: string;
+    width: number;
+
+    constructor(data?: IPhotosItemType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.height = data["height"] !== undefined ? data["height"] : <any>null;
+            if (data["html_attributions"]) {
+                this.html_attributions = {};
+                for (let key in data["html_attributions"]) {
+                    if (data["html_attributions"].hasOwnProperty(key))
+                        this.html_attributions[key] = data["html_attributions"][key];
+                }
+            }
+            this.photo_reference = data["photo_reference"] !== undefined ? data["photo_reference"] : <any>null;
+            this.width = data["width"] !== undefined ? data["width"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PhotosItemType {
+        data = typeof data === 'object' ? data : {};
+        let result = new PhotosItemType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["height"] = this.height !== undefined ? this.height : <any>null;
+        if (this.html_attributions) {
+            data["html_attributions"] = {};
+            for (let key in this.html_attributions) {
+                if (this.html_attributions.hasOwnProperty(key))
+                    data["html_attributions"][key] = this.html_attributions[key] !== undefined ? this.html_attributions[key] : <any>null;
+            }
+        }
+        data["photo_reference"] = this.photo_reference !== undefined ? this.photo_reference : <any>null;
+        data["width"] = this.width !== undefined ? this.width : <any>null;
+        return data; 
+    }
+}
+
+export interface IPhotosItemType {
+    height: number;
+    html_attributions: any;
+    photo_reference: string;
+    width: number;
+}
+
+export class AltIdsItemType implements IAltIdsItemType {
+    place_id: string;
+    scope: string;
+
+    constructor(data?: IAltIdsItemType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.place_id = data["place_id"] !== undefined ? data["place_id"] : <any>null;
+            this.scope = data["scope"] !== undefined ? data["scope"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): AltIdsItemType {
+        data = typeof data === 'object' ? data : {};
+        let result = new AltIdsItemType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["place_id"] = this.place_id !== undefined ? this.place_id : <any>null;
+        data["scope"] = this.scope !== undefined ? this.scope : <any>null;
+        return data; 
+    }
+}
+
+export interface IAltIdsItemType {
+    place_id: string;
+    scope: string;
+}
+
+export class ResultsItemType implements IResultsItemType {
+    geometry: GeometryType = new GeometryType();
+    icon: string;
+    id: string;
+    name: string;
+    opening_hours: OpeningHoursType = new OpeningHoursType();
+    photos: PhotosItemType[] = [];
+    place_id: string;
+    scope: string;
+    alt_ids: AltIdsItemType[] = [];
+    reference: string;
+    types: string[] = [];
+    vicinity: string;
+
+    constructor(data?: IResultsItemType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.geometry = data["geometry"] ? GeometryType.fromJS(data["geometry"]) : new GeometryType();
+            this.icon = data["icon"] !== undefined ? data["icon"] : <any>null;
+            this.id = data["id"] !== undefined ? data["id"] : <any>null;
+            this.name = data["name"] !== undefined ? data["name"] : <any>null;
+            this.opening_hours = data["opening_hours"] ? OpeningHoursType.fromJS(data["opening_hours"]) : new OpeningHoursType();
+            if (data["photos"] && data["photos"].constructor === Array) {
+                this.photos = [];
+                for (let item of data["photos"])
+                    this.photos.push(PhotosItemType.fromJS(item));
+            }
+            this.place_id = data["place_id"] !== undefined ? data["place_id"] : <any>null;
+            this.scope = data["scope"] !== undefined ? data["scope"] : <any>null;
+            if (data["alt_ids"] && data["alt_ids"].constructor === Array) {
+                this.alt_ids = [];
+                for (let item of data["alt_ids"])
+                    this.alt_ids.push(AltIdsItemType.fromJS(item));
+            }
+            this.reference = data["reference"] !== undefined ? data["reference"] : <any>null;
+            if (data["types"] && data["types"].constructor === Array) {
+                this.types = [];
+                for (let item of data["types"])
+                    this.types.push(item);
+            }
+            this.vicinity = data["vicinity"] !== undefined ? data["vicinity"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): ResultsItemType {
+        data = typeof data === 'object' ? data : {};
+        let result = new ResultsItemType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["geometry"] = this.geometry ? this.geometry.toJSON() : <any>null;
+        data["icon"] = this.icon !== undefined ? this.icon : <any>null;
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["opening_hours"] = this.opening_hours ? this.opening_hours.toJSON() : <any>null;
+        if (this.photos && this.photos.constructor === Array) {
+            data["photos"] = [];
+            for (let item of this.photos)
+                data["photos"].push(item.toJSON());
+        }
+        data["place_id"] = this.place_id !== undefined ? this.place_id : <any>null;
+        data["scope"] = this.scope !== undefined ? this.scope : <any>null;
+        if (this.alt_ids && this.alt_ids.constructor === Array) {
+            data["alt_ids"] = [];
+            for (let item of this.alt_ids)
+                data["alt_ids"].push(item.toJSON());
+        }
+        data["reference"] = this.reference !== undefined ? this.reference : <any>null;
+        if (this.types && this.types.constructor === Array) {
+            data["types"] = [];
+            for (let item of this.types)
+                data["types"].push(item);
+        }
+        data["vicinity"] = this.vicinity !== undefined ? this.vicinity : <any>null;
+        return data; 
+    }
+}
+
+export interface IResultsItemType {
+    geometry: GeometryType;
+    icon: string;
+    id: string;
+    name: string;
+    opening_hours: OpeningHoursType;
+    photos: PhotosItemType[];
+    place_id: string;
+    scope: string;
+    alt_ids: AltIdsItemType[];
+    reference: string;
+    types: string[];
+    vicinity: string;
+}
+
+export class GooglePlaceSearchResponse implements IGooglePlaceSearchResponse {
+    results: ResultsItemType[] = [];
+    status: string;
+
+    constructor(data?: IGooglePlaceSearchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["results"] && data["results"].constructor === Array) {
+                this.results = [];
+                for (let item of data["results"])
+                    this.results.push(ResultsItemType.fromJS(item));
+            }
+            this.status = data["status"] !== undefined ? data["status"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GooglePlaceSearchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GooglePlaceSearchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.results && this.results.constructor === Array) {
+            data["results"] = [];
+            for (let item of this.results)
+                data["results"].push(item.toJSON());
+        }
+        data["status"] = this.status !== undefined ? this.status : <any>null;
+        return data; 
+    }
+}
+
+export interface IGooglePlaceSearchResponse {
+    results: ResultsItemType[];
+    status: string;
+}
+
+export class GeoCodeLocation implements IGeoCodeLocation {
+    lat: number;
+    lng: number;
+    address?: string | null;
+
+    constructor(data?: IGeoCodeLocation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.lat = data["lat"] !== undefined ? data["lat"] : <any>null;
+            this.lng = data["lng"] !== undefined ? data["lng"] : <any>null;
+            this.address = data["address"] !== undefined ? data["address"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GeoCodeLocation {
+        data = typeof data === 'object' ? data : {};
+        let result = new GeoCodeLocation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lat"] = this.lat !== undefined ? this.lat : <any>null;
+        data["lng"] = this.lng !== undefined ? this.lng : <any>null;
+        data["address"] = this.address !== undefined ? this.address : <any>null;
+        return data; 
+    }
+}
+
+export interface IGeoCodeLocation {
+    lat: number;
+    lng: number;
+    address?: string | null;
+}
+
 export class Loctype implements ILoctype {
     lat: number;
     lng: number;
@@ -444,12 +922,12 @@ export enum EventStatus {
     Cancelled = <any>"cancelled", 
 }
 
-export class LocationType implements ILocationType {
+export class LyftLocationType implements ILyftLocationType {
     lat: number;
     bearing: number;
     lng: number;
 
-    constructor(data?: ILocationType) {
+    constructor(data?: ILyftLocationType) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -466,9 +944,9 @@ export class LocationType implements ILocationType {
         }
     }
 
-    static fromJS(data: any): LocationType {
+    static fromJS(data: any): LyftLocationType {
         data = typeof data === 'object' ? data : {};
-        let result = new LocationType();
+        let result = new LyftLocationType();
         result.init(data);
         return result;
     }
@@ -482,7 +960,7 @@ export class LocationType implements ILocationType {
     }
 }
 
-export interface ILocationType {
+export interface ILyftLocationType {
     lat: number;
     bearing: number;
     lng: number;
@@ -603,7 +1081,7 @@ export class EventType implements IEventType {
     can_cancel: string[] = [];
     canceled_by: string;
     status: EventStatus;
-    location: LocationType = new LocationType();
+    location: LyftLocationType = new LyftLocationType();
     generated_at: string;
     vehicle: VehicleType = new VehicleType();
     ride_type: string;
@@ -636,7 +1114,7 @@ export class EventType implements IEventType {
             }
             this.canceled_by = data["canceled_by"] !== undefined ? data["canceled_by"] : <any>null;
             this.status = data["status"] !== undefined ? data["status"] : <any>null;
-            this.location = data["location"] ? LocationType.fromJS(data["location"]) : new LocationType();
+            this.location = data["location"] ? LyftLocationType.fromJS(data["location"]) : new LyftLocationType();
             this.generated_at = data["generated_at"] !== undefined ? data["generated_at"] : <any>null;
             this.vehicle = data["vehicle"] ? VehicleType.fromJS(data["vehicle"]) : new VehicleType();
             this.ride_type = data["ride_type"] !== undefined ? data["ride_type"] : <any>null;
@@ -691,7 +1169,7 @@ export interface IEventType {
     can_cancel: string[];
     canceled_by: string;
     status: EventStatus;
-    location: LocationType;
+    location: LyftLocationType;
     generated_at: string;
     vehicle: VehicleType;
     ride_type: string;
@@ -750,50 +1228,6 @@ export interface ILyftWebhookParams {
     occurred_at: string;
     event_type: string;
     event: EventType;
-}
-
-export class GeoCodeLocation implements IGeoCodeLocation {
-    lat: number;
-    lng: number;
-    address?: string | null;
-
-    constructor(data?: IGeoCodeLocation) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.lat = data["lat"] !== undefined ? data["lat"] : <any>null;
-            this.lng = data["lng"] !== undefined ? data["lng"] : <any>null;
-            this.address = data["address"] !== undefined ? data["address"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): GeoCodeLocation {
-        data = typeof data === 'object' ? data : {};
-        let result = new GeoCodeLocation();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["lat"] = this.lat !== undefined ? this.lat : <any>null;
-        data["lng"] = this.lng !== undefined ? this.lng : <any>null;
-        data["address"] = this.address !== undefined ? this.address : <any>null;
-        return data; 
-    }
-}
-
-export interface IGeoCodeLocation {
-    lat: number;
-    lng: number;
-    address?: string | null;
 }
 
 export class RideResponseParams implements IRideResponseParams {
