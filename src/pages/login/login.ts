@@ -24,23 +24,30 @@ export class LoginPage implements OnInit {
   }
 
   login(): void {
-    if (this.authenticationService.login(this.username, this.password)) {
-      this.navController.setRoot(HomePage);
-      this.toastController.create({
-        message: "Log in succeeded.",
-        duration: 5000,
-        showCloseButton: true,
-        closeButtonText: "OK",
-        cssClass: "toast-success"
-      }).present();
-    } else {
-      this.toastController.create({
-        message: "Log in failed.",
-        duration: 5000,
-        showCloseButton: true,
-        closeButtonText: "OK",
-        cssClass: "toast-danger"
-      }).present();
-    }
+    this.authenticationService.login(this.username, this.password).subscribe(
+      (userLoginResponse: any): void => {
+        console.log(userLoginResponse.response);
+
+        this.navController.setRoot(HomePage);
+        this.toastController.create({
+          message: "Log in succeeded.",
+          duration: 5000,
+          showCloseButton: true,
+          closeButtonText: "OK",
+          cssClass: "toast-success"
+        }).present();
+      },
+      (error: any) => {
+        console.error(error.response);
+
+        this.toastController.create({
+          message: "Log in failed.",
+          duration: 5000,
+          showCloseButton: true,
+          closeButtonText: "OK",
+          cssClass: "toast-danger"
+        }).present();
+      }
+    );
   }
 }
