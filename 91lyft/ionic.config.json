@@ -1,8 +1,0 @@
-{
-  "name": "91lyft",
-  "app_id": "aa6ca53a",
-  "type": "ionic-angular",
-  "integrations": {
-    "cordova": {}
-  }
-}
