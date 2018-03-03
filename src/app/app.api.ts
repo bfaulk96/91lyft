@@ -91,6 +91,73 @@ export class LyftClient extends BaseClient {
         }
         return Observable.of<RideResponseParams>(<any>null);
     }
+
+    /**
+     * @return Ok
+     */
+    updateLyftRideStatus(rideId: string, requestStatus: RequestStatus): Observable<any> {
+        let url_ = this.baseUrl + "/lyfts/update-ride-status/{rideId}?";
+        if (rideId === undefined || rideId === null)
+            throw new Error("The parameter 'rideId' must be defined.");
+        url_ = url_.replace("{rideId}", encodeURIComponent("" + rideId)); 
+        if (requestStatus === undefined || requestStatus === null)
+            throw new Error("The parameter 'requestStatus' must be defined and cannot be null.");
+        else
+            url_ += "requestStatus=" + encodeURIComponent("" + requestStatus) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return Observable.fromPromise(this.transformOptions(options_)).flatMap(transformedOptions_ => {
+            return this.http.request("get", url_, transformedOptions_);
+        }).flatMap((response_: any) => {
+            return this.processUpdateLyftRideStatus(response_);
+        }).catch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLyftRideStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<any>><any>Observable.throw(e);
+                }
+            } else
+                return <Observable<any>><any>Observable.throw(response_);
+        });
+    }
+
+    protected processUpdateLyftRideStatus(response: HttpResponseBase): Observable<any> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).flatMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200) {
+                result200 = {};
+                for (let key in resultData200) {
+                    if (resultData200.hasOwnProperty(key))
+                        result200[key] = resultData200[key];
+                }
+            }
+            return Observable.of(result200);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).flatMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Observable.of<any>(<any>null);
+    }
 }
 
 @Injectable()
@@ -1003,6 +1070,15 @@ export class UserLoginParams implements IUserLoginParams {
 export interface IUserLoginParams {
     username: string;
     password: string;
+}
+
+export enum RequestStatus {
+    Pending = <any>"pending", 
+    Accepted = <any>"accepted", 
+    Arrived = <any>"arrived", 
+    PickedUp = <any>"pickedUp", 
+    DroppedOff = <any>"droppedOff", 
+    Cancelled = <any>"cancelled", 
 }
 
 export class SwaggerException extends Error {
