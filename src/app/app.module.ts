@@ -1,59 +1,62 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {ErrorHandler, NgModule} from '@angular/core';
-import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
-import {SplashScreen} from '@ionic-native/splash-screen';
-import {StatusBar} from '@ionic-native/status-bar';
-import {Geolocation} from '@ionic-native/geolocation';
-import {MyApp} from './app';
-import {HomePage} from '../pages/home/home';
-import {AgmCoreModule} from '@agm/core';
-import {Diagnostic} from '@ionic-native/diagnostic';
-import {HttpClientModule} from "@angular/common/http";
-import {AgmDirectionModule} from 'agm-direction';
-import {LandingPage} from "../pages/landing/landing";
-import {LocationAccuracy} from "@ionic-native/location-accuracy";
-import {AuthenticationService} from "../services/authentication.service";
-import {LoginPage} from "../pages/login/login";
-import {LoginPageModule} from "../pages/login/login.module";
-import {API_BASE_URL, GoogleMapsClient, UserClient} from './app.api';
+import { AgmCoreModule } from '@agm/core';
+import { HttpClientModule } from '@angular/common/http';
+import { ErrorHandler, NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { Diagnostic } from '@ionic-native/diagnostic';
+import { Geolocation } from '@ionic-native/geolocation';
+import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
+import { AgmDirectionModule } from 'agm-direction';
+import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { HomePage } from '../pages/home/home';
+import { LandingPage } from '../pages/landing/landing';
+import { LoginPage } from '../pages/login/login';
+import { LoginPageModule } from '../pages/login/login.module';
+import { AuthenticationService } from '../services/authentication.service';
+import { MyApp } from './app';
+import { API_BASE_URL, GoogleMapsClient, LyftClient, UserClient } from './app.api';
+import { SocketClientService } from './services/socket-client.service';
 
 @NgModule({
-  declarations: [
-    MyApp,
-    HomePage,
-    LandingPage
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    IonicModule.forRoot(MyApp),
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyD3FgRTJxRDFpFgYWvrbQ9RpgITNs1KgvY'
-    }),
-    AgmDirectionModule,
-    LoginPageModule
-  ],
-  bootstrap: [
-    IonicApp
-  ],
-  entryComponents: [
-    MyApp,
-    HomePage,
-    LandingPage,
-    LoginPage
-  ],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    Geolocation,
-    Diagnostic,
-    LocationAccuracy,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    declarations: [
+        MyApp,
+        HomePage,
+        LandingPage
+    ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        IonicModule.forRoot(MyApp),
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyD3FgRTJxRDFpFgYWvrbQ9RpgITNs1KgvY'
+        }),
+        AgmDirectionModule,
+        LoginPageModule
+    ],
+    bootstrap: [
+        IonicApp
+    ],
+    entryComponents: [
+        MyApp,
+        HomePage,
+        LandingPage,
+        LoginPage
+    ],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        Geolocation,
+        Diagnostic,
+        LocationAccuracy,
+        {provide: ErrorHandler, useClass: IonicErrorHandler},
         {provide: API_BASE_URL, useFactory: baseUrl},
-    AuthenticationService,
-    UserClient,
-    GoogleMapsClient
-  ]
+        AuthenticationService,
+        UserClient,
+        GoogleMapsClient,
+        SocketClientService,
+        LyftClient
+    ]
 })
 
 export class AppModule {

@@ -26,7 +26,7 @@ export class LoginPage implements OnInit {
   login(): void {
     this.authenticationService.login(this.username, this.password).subscribe(
       (userLoginResponse: any): void => {
-        console.log(userLoginResponse.response);
+        console.log(userLoginResponse);
 
         this.navController.setRoot(HomePage);
         this.toastController.create({
