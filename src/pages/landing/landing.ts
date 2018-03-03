@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Component} from '@angular/core';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {HomePage} from "../home/home";
 
 /**
@@ -23,7 +23,7 @@ export class LandingPage {
     console.log('ionViewDidLoad LandingPage');
   }
 
-  goHome(){
+  goHome() {
     this.navCtrl.setRoot(HomePage);
   }
 

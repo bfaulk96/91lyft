@@ -14,3 +14,14 @@ $colors: (
   light: #f4f4f4,
   dark: #222
 );
+
+.toast-success {
+  .toast-wrapper {
+    background-color: map-get($colors, secondary) !important;
+  }
+}
+.toast-danger {
+  .toast-wrapper {
+    background-color: map-get($colors, danger) !important;
+  }
+}

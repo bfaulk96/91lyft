@@ -1,11 +1,13 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NavController} from 'ionic-angular';
-import { Geolocation } from '@ionic-native/geolocation';
+import {Geolocation} from '@ionic-native/geolocation';
 import {AgmMap} from "@agm/core";
-import { Diagnostic } from '@ionic-native/diagnostic';
+import {Diagnostic} from '@ionic-native/diagnostic';
 import {MyApp} from "../../app/app";
 
 import {HttpClient, HttpParams} from "@angular/common/http";
+import {AuthenticationService} from "../../services/authentication.service";
+import {LoginPage} from "../login/login";
 
 @Component({
   selector: 'page-home',
@@ -14,8 +16,8 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 export class HomePage implements OnInit {
   // @ViewChild('map') mapElement: ElementRef;
   map: AgmMap = null;
-  currentLoc: {lat: number, lng: number} = {lat: 38.63144, lng: -90.19319};
-  urgentCareLatLng: {lat: number, lng: number} = {lat: this.currentLoc.lat, lng: this.currentLoc.lng};
+  currentLoc: { lat: number, lng: number } = {lat: 38.63144, lng: -90.19319};
+  urgentCareLatLng: { lat: number, lng: number } = {lat: this.currentLoc.lat, lng: this.currentLoc.lng};
   zoom: number = 14;
   displayMap: boolean = false;
   // center: LatLngLiteral;
@@ -27,8 +29,9 @@ export class HomePage implements OnInit {
 
   constructor(private navController: NavController,
               private diagnostic: Diagnostic,
-              private geolocation : Geolocation,
-              private http: HttpClient) {
+              private geolocation: Geolocation,
+              private http: HttpClient,
+              private authenticationService: AuthenticationService) {
   }
 
   ngOnInit(): void {
@@ -86,6 +89,14 @@ export class HomePage implements OnInit {
           );
       }
     );
+  }
+
+  callARide(): void {
+  }
+
+  logout(): void {
+    this.authenticationService.logout();
+    this.navController.setRoot(LoginPage);
   }
 
   // loadMap(){

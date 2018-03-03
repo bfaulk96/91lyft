@@ -3,6 +3,11 @@
     <ion-title align-items-center justify-content-center class="text-center">
       <img src="./assets/imgs/91lyft-v3.png" class="nav-img">
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="logout();">
+        <ion-icon ios="ios-power" md="md-power"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 <ion-content class="map-card" align-items-center justify-content-center>
@@ -20,6 +25,6 @@
 </ion-content>
 <ion-footer class="footer">
   <ion-row align-items-center justify-content-center>
-    <button ion-button large color="primary" class="lyft-btn">Call a Ride!</button>
+    <button ion-button large color="primary" class="lyft-btn" (click)="callARide()">Call a Ride!</button>
   </ion-row>
 </ion-footer>
