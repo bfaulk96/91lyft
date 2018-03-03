@@ -1,9 +1,3 @@
-# TSOA Hackathon Ready Pack
-
-The project is a starter-pack which utilizes **lukeautry/tsoa** package ([TSOA Official Github](https://github.com/lukeautry/tsoa)) for **Node** **Express** and **MongoDB** backend rapid development in **TypeScript** which enables the **Repository Pattern**design. 
-
-**TSOA** provides a **CLI Tool** to **generate** *Routes* and *Swagger Specs* to empower **SwaggerUI** for APIs Documentation. 
-
 # Steps
 1. Clone the repo
 2. **IMPORTANT**: Install *devDependencies* first by running `npm install --only=dev`. This is to install **copyfiles** and **typescript** packages. The reason is that I am using my *forked* repo of the *official lukeautry/tsoa* repo.
