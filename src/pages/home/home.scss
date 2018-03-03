@@ -1,12 +1,18 @@
 page-home {
+
   .home-body {
     width: 100%;
     text-align: center;
   }
 
+  ion-icon {
+    color: #9c0000;
+  }
+
   .map-card {
     padding: 0 !important;
     text-align: center;
+    color: map-get($colors, lyft);
 
     ion-item {
       margin-left: auto;
@@ -18,6 +24,10 @@ page-home {
     min-height: 300px;
   }
 
+  .map-wrapper {
+    border: 2px solid map-get($colors, lyft);
+  }
+
   agm-map {
     height: 300px;
   }
@@ -26,10 +36,18 @@ page-home {
     width: 90%;
     height: 80px;
     font-size: 2em;
+    color: map-get($colors, lyftBlue);
+    font-weight: bold;
+    border-radius: 5px;
+  }
+
+  .lyft-btn:hover {
+    background-color: darken(map-get($colors, lyft), 10);
   }
 
   ion-content {
     border-bottom: none !important;
+    background-color: map-get($colors, lyftGrey) !important;
   }
 
   ion-footer {

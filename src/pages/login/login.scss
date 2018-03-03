@@ -1,5 +1,32 @@
 page-login {
   .login-button {
     width: 100%;
+    color: map-get($colors, lyftBlue);
+    font-weight: bold;
+  }
+  ion-content {
+    background-color: map-get($colors, lyftGrey) !important;
+    color: map-get($colors, lyftWhite) !important;
+  }
+
+  .list-ios > .item-block:first-child {
+    border-top: none;
+  }
+
+  .list-ios > .item-block:last-child, .list-ios > .item-wrapper:last-child .item-block {
+    border-bottom: none;
+  }
+
+  .list-md .item-input:last-child {
+    border-bottom: none;
+  }
+
+  .item-inner {
+    color: map-get($colors, lyftWhite);
+    border-bottom: 1px solid map-get($colors, lyftWhite) !important;
+  }
+
+  .login-field {
+    background-color: map-get($colors, lyftGrey);
   }
 }

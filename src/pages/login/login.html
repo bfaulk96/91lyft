@@ -4,17 +4,16 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding>
-  <img src="./assets/imgs/91lyft-v3.png"/>
-  <h3 text-center>Login</h3>
+  <img src="./assets/imgs/91lyft-drk-bg.png"/>
   <ion-list>
-    <ion-item>
-      <ion-label fixed>Username</ion-label>
-      <ion-input type="text" [(ngModel)]="username"></ion-input>
+    <ion-item class="login-field">
+      <!--<ion-label fixed>Username</ion-label>-->
+      <ion-input type="text" placeholder="Username" [(ngModel)]="username"></ion-input>
     </ion-item>
-    <ion-item>
-      <ion-label fixed>Password</ion-label>
-      <ion-input type="password" [(ngModel)]="password"></ion-input>
+    <ion-item class="login-field">
+      <!--<ion-label fixed>Password</ion-label>-->
+      <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
     </ion-item>
   </ion-list>
-  <button ion-button (click)="login()" class="login-button">Login</button>
+  <button ion-button color="lyft" (click)="login()" class="login-button">Login</button>
 </ion-content>
