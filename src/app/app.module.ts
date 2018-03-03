@@ -15,6 +15,7 @@ import {LocationAccuracy} from "@ionic-native/location-accuracy";
 import {AuthenticationService} from "../services/authentication.service";
 import {LoginPage} from "../pages/login/login";
 import {LoginPageModule} from "../pages/login/login.module";
+import { API_BASE_URL } from './app.api';
 
 @NgModule({
   declarations: [
@@ -48,8 +49,13 @@ import {LoginPageModule} from "../pages/login/login.module";
     Diagnostic,
     LocationAccuracy,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
+        {provide: API_BASE_URL, useFactory: baseUrl},
     AuthenticationService
   ]
 })
 export class AppModule {
+}
+
+export function baseUrl(): string {
+    return `https://server-91lyft.herokuapp.com/api`;
 }
