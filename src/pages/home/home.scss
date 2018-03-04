@@ -47,11 +47,6 @@ page-home {
     }
   }
 
-  .spinner {
-    min-height: 300px;
-    border: 2px solid map-get($colors, lyft);
-  }
-
   .map-wrapper {
     border: 2px solid map-get($colors, lyft);
   }
