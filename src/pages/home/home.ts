@@ -75,6 +75,14 @@ export class HomePage implements OnInit {
             this.driver = lyftWebhookParams.event.driver;
             this.vehicle = lyftWebhookParams.event.vehicle;
 
+            this.toastController.create({
+              message: "Your ride has been accepted!",
+              duration: 5000,
+              showCloseButton: true,
+              closeButtonText: "OK",
+              cssClass: "toast-success"
+            }).present();
+
             break;
           default:
             break

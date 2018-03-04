@@ -40,10 +40,14 @@
   <ion-card *ngIf="!googleMapReady || !urgentCareReady" class="spinner" align-items-center justify-content-center>
     <img src="./assets/imgs/loading-spinner.svg">
   </ion-card>
-  <ion-row align-items-center justify-content-center>
-    <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
-  </ion-row>
+  <ng-container *ngIf="!rideAccepted">
+    <ion-row align-items-center justify-content-center>
+      <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
+    </ion-row>
+  </ng-container>
   <ng-container *ngIf="rideAccepted">
-    <p>Ride Accepted</p>
+    <ion-card>
+      <!--Driver info here-->
+    </ion-card>
   </ng-container>
 </ion-content>
