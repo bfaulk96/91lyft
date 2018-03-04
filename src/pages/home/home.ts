@@ -5,7 +5,10 @@ import {Component, OnInit} from '@angular/core';
 import {Diagnostic} from '@ionic-native/diagnostic';
 import {Geolocation} from '@ionic-native/geolocation';
 import {LoadingController, NavController, ToastController} from 'ionic-angular';
-import {GeoCodeLocation, GoogleMapsClient, LyftClient, RequestStatus, ResultsItemType, RideRequestParams, RideResponseParams, SwaggerException} from '../../app/app.api';
+import {
+  GeoCodeLocation, GoogleMapsClient, GooglePlaceSearchResponse, LyftClient, RequestStatus, ResultsItemType,
+  RideRequestParams, RideResponseParams, SwaggerException
+} from '../../app/app.api';
 import {SocketClientService} from '../../app/services/socket-client.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {LoginPage} from '../login/login';
@@ -120,24 +123,23 @@ export class HomePage implements OnInit {
   }
 
   getNearbyUrgentCare(): void {
-    // this.googleMapsClient.getUrgentCares(new GeoCodeLocation({
-    //   lat: this.currentLoc.lat,
-    //   lng: this.currentLoc.lng
-    // })).subscribe(
-    //   (googlePlaceSearchResponse: GooglePlaceSearchResponse): void => {
-    //     if (googlePlaceSearchResponse.results) {
-    //       const closestResult = this.findClosestResult(googlePlaceSearchResponse.results);
-    //       this.urgentCareLatLng = closestResult.geometry.location;
-    //       this.urgentCareReady = true;
-    //       if (this.googleMapReady) {
-    //         this.rideStatus = "Request a Ride";
-    //       }
-    //     }
-    //   }
-    // );
-
-    this.urgentCareLatLng = {lat: this.currentLoc.lat - 0.15, lng: this.currentLoc.lng - 0.15};
-    this.urgentCareReady = true;
+    this.googleMapsClient.getUrgentCares(new GeoCodeLocation({
+      lat: this.currentLoc.lat,
+      lng: this.currentLoc.lng
+    }), true).subscribe(
+      (googlePlaceSearchResponse: GooglePlaceSearchResponse): void => {
+        if (googlePlaceSearchResponse.results) {
+          const closestResult = this.findClosestResult(googlePlaceSearchResponse.results);
+          this.urgentCareLatLng = closestResult.geometry.location;
+          this.urgentCareReady = true;
+          if (this.googleMapReady) {
+            this.rideStatus = "Request a Ride";
+          }
+        }
+      }
+    );
+    // this.urgentCareLatLng = {lat: this.currentLoc.lat - 0.15, lng: this.currentLoc.lng - 0.15};
+    // this.urgentCareReady = true;
   }
 
   findClosestResult(results: Array<ResultsItemType>): ResultsItemType {
