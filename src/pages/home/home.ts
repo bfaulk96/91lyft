@@ -184,6 +184,30 @@ export class HomePage implements OnInit {
     alert.present();
   }
 
+  confirmLogout() {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm action',
+      message: 'Are you sure you want to log out?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Log out',
+          handler: () => {
+            console.log('Yes clicked');
+            this.logout()
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
   callARide(): void {
     const loadingInstance = this.loadingController.create({
       spinner: "dots",
