@@ -7,6 +7,7 @@ import * as io from 'socket.io-client';
 export class SocketClientService {
 
     private socket: SocketIOClient.Socket;
+    private rideId: string;
     private rideIdSub: ReplaySubject<string> = new ReplaySubject<string>();
     rideIdObs = this.rideIdSub.asObservable();
 
@@ -18,13 +19,17 @@ export class SocketClientService {
         this.socket.emit(event);
     }
 
-    getRideId(rideId: string) {
+    getRideId2(rideId: string) {
         this.rideIdSub.next(rideId);
     }
 
-    onRideStatusUpdated(rideId: string) {
+    getRideId1(rideId: string) {
+        this.rideId = rideId;
+    }
+
+    onRideStatusUpdated() {
         return new Observable(observer => {
-            this.socket.on(`ride.status.updated_${rideId}`, data => {
+            this.socket.on(`ride.status.updated_${this.rideId}`, data => {
                 observer.next(data);
             });
         });
