@@ -1,5 +1,5 @@
 import {AgmMap} from '@agm/core';
-
+import {Platform} from 'ionic-angular';
 import {HttpClient} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import {Diagnostic} from '@ionic-native/diagnostic';
@@ -9,7 +9,7 @@ import {GeoCodeLocation, GoogleMapsClient, LyftClient, RequestStatus, ResultsIte
 import {SocketClientService} from '../../app/services/socket-client.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {LoginPage} from '../login/login';
-import {DriverType, LyftLocationType, VehicleType} from "../../app/services/lyft-webhook.interface";
+import {DriverType, EventType, LyftLocationType, VehicleType} from "../../app/services/lyft-webhook.interface";
 
 @Component({
   selector: 'page-home',
@@ -28,8 +28,10 @@ export class HomePage implements OnInit {
   rideStatus: string = "Please wait...";
   rideAccepted: boolean = false;
   driverLocation: LyftLocationType;
+  driverEvent: EventType;
   driver: DriverType;
   vehicle: VehicleType;
+  amount: string;
 
   constructor(private navController: NavController,
               private diagnostic: Diagnostic,
@@ -40,7 +42,8 @@ export class HomePage implements OnInit {
               private lyftClient: LyftClient,
               private socketService: SocketClientService,
               private loadingController: LoadingController,
-              private toastController: ToastController) {
+              private toastController: ToastController,
+              private platform: Platform) {
   }
 
   ngOnInit(): void {
@@ -72,8 +75,10 @@ export class HomePage implements OnInit {
             // Add these values to the origin value to randomly position the Lyft driver around the user within the allowed_distance miles.
             this.driverLocation = {lat: lat + lat_dist, lng: lng + lng_dist, bearing: undefined};
 
-            this.driver = lyftWebhookParams.event.driver;
-            this.vehicle = lyftWebhookParams.event.vehicle;
+            this.driverEvent = lyftWebhookParams.event;
+            this.amount = ((11 + Math.random() * 10) + Math.random()).toFixed(2);
+            this.driver = this.driverEvent.driver;
+            this.vehicle = this.driverEvent.vehicle;
 
             this.toastController.create({
               message: "Your ride has been accepted!",
@@ -91,7 +96,6 @@ export class HomePage implements OnInit {
     );
   }
 
-
   ionViewDidLoad() {
     this.setGeoLocation();
     this.getNearbyUrgentCare();
@@ -103,7 +107,7 @@ export class HomePage implements OnInit {
         this.currentLoc.lng = position.coords.longitude;
         this.googleMapReady = true;
         if (this.urgentCareReady) {
-          this.rideStatus = "Request a Ride!";
+          this.rideStatus = "Request a Ride";
         }
       },
       (err) => {
@@ -122,7 +126,7 @@ export class HomePage implements OnInit {
     //       this.urgentCareLatLng = closestResult.geometry.location;
     //       this.urgentCareReady = true;
     //       if (this.googleMapReady) {
-    //         this.rideStatus = "Request a Ride!";
+    //         this.rideStatus = "Request a Ride";
     //       }
     //     }
     //   }
@@ -212,6 +216,12 @@ export class HomePage implements OnInit {
         loadingInstance.dismissAll();
       }
     );
+  }
+
+  getRandomPrice(): number {
+    let dollars: number = ((4 + Math.random() * 10) + Math.random());
+    let cents: number = Math.random();
+    return dollars + cents;
   }
 
   logout(): void {

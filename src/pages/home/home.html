@@ -5,7 +5,7 @@
     </ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="logout();">
-        <ion-icon ios="md-log-out" md="md-log-out"></ion-icon>
+        <ion-icon class='logout-icon' ios="md-log-out" md="md-log-out"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -19,12 +19,12 @@
       <agm-direction [origin]="currentLoc" [destination]="urgentCareLatLng"></agm-direction>
       <ng-container *ngIf="rideAccepted">
         <p>Marker Ride Accepted</p>
-        <agm-marker [latitude]="driverLocation.lat" [longitude]="driverLocation.lng">
+        <agm-marker [latitude]="driverLocation.lat" [longitude]="driverLocation.lng" [iconUrl]="'http://maps.google.com/mapfiles/kml/pal4/icon31.png'">
           <agm-info-window>
             <strong>{{driver.first_name}}</strong>
             <img class="vehicle-image" src="{{vehicle.image_url}}">
-            <p><ion-icon ios="ios-phone-portrait" md="md-phone-portrait"></ion-icon> {{driver.phone_number}}</p>
-            <p><ion-icon ios="ios-star" md="md-star"></ion-icon> {{driver.rating}}/5.0</p>
+            <p><ion-icon class='phone' ios="ios-phone-portrait" md="md-phone-portrait"></ion-icon> {{driver.phone_number}}</p>
+            <p><ion-icon class='star' ios="ios-star" md="md-star"></ion-icon> {{driver.rating}}/5.0</p>
           </agm-info-window>
         </agm-marker>
       </ng-container>
@@ -39,12 +39,34 @@
   </ion-card>
   <ng-container *ngIf="!rideAccepted">
     <ion-row align-items-center justify-content-center>
-      <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
+      <button *ngIf="!platform.is('android')" ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
+      <button *ngIf="platform.is('android')" ion-button large color="lyft" class="lyft-btn btn-android" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
     </ion-row>
   </ng-container>
   <ng-container *ngIf="rideAccepted">
-    <ion-card>
-      <!--Driver info here-->
+    <ion-card class="text-left driver-info">
+      <ion-card-header>
+        <div class="text-center driver-details-title">
+          <h2 class="text-center">Lyft Details</h2>
+        </div>
+        <br>
+        <div><strong>Driver:</strong> {{driver.first_name}}</div>
+        <div><strong>Phone:</strong> {{driver.phone_number}}</div>
+        <div><strong>Rating:</strong> {{driver.rating}}/5.0</div>
+      </ion-card-header>
+      <hr>
+      <ion-card-content>
+        <div><strong>Price:</strong> ${{amount}}</div>
+        <div *ngIf="driverEvent.destination.address"><strong>Destination:</strong> {{driverEvent.destination.address}}</div>
+        <div class="text-left">
+          <strong>Car Details:</strong>
+          <ul class="car-deets">
+            <li><strong>Make: </strong>{{vehicle.make}}</li>
+            <li><strong>Model: </strong>{{vehicle.model}}</li>
+            <li><strong>Color: </strong>{{vehicle.color}}</li>
+          </ul>
+        </div>
+      </ion-card-content>
     </ion-card>
   </ng-container>
 </ion-content>

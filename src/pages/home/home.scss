@@ -1,9 +1,15 @@
 @import "../../theme/variables";
 
 page-home {
-  ion-icon {
+  .logout-icon {
     color: #9c0000;
     vertical-align: middle;
+  }
+  .star {
+    color: gold !important;
+  }
+  .phone {
+    color: black;
   }
 
   ion-title {
@@ -47,8 +53,20 @@ page-home {
     }
   }
 
-  .map-wrapper {
+  ion-card {
+    position: relative;
     border: 2px solid map-get($colors, lyft);
+  }
+
+  .driver-info {
+    color: map-get($colors, lyftGrey);
+    strong {
+      color: map-get($colors, lyftBlue);
+    }
+  }
+
+  hr {
+    margin: 0 auto;
   }
 
   .lyft-btn {
@@ -62,6 +80,22 @@ page-home {
 
   .lyft-btn:hover {
     background-color: darken(map-get($colors, lyft), 10);
+  }
+
+  .btn-android {
+    text-transform: capitalize;
+  }
+
+  .driver-details-title {
+    width: 100%;
+    text-align: right;
+    h2 {
+      font-weight: bold;
+      position: absolute;
+      color: map-get($colors, lyft);
+      top: $card-md-margin-top;
+      right: $card-md-margin-right;
+    }
   }
 
   .loader {
@@ -99,10 +133,6 @@ page-home {
     margin-left: 7px;
     margin-top: 10px;
     margin-bottom: 10px;
-  }
-
-  ion-card {
-    position: relative;
   }
 
   .block-map {
@@ -171,6 +201,18 @@ page-home {
       -webkit-transform: translateX(100px);
       transform: translateX(100px);
       opacity: 0;
+    }
+  }
+
+  .text-left * {
+    text-align: left;
+  }
+
+  .car-deets {
+    margin-top: 0;
+    padding-left: 20px;
+    .li {
+      margin-left: 5px;
     }
   }
 }
