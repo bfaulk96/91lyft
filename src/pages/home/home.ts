@@ -5,10 +5,11 @@ import {Component, OnInit} from '@angular/core';
 import {Diagnostic} from '@ionic-native/diagnostic';
 import {Geolocation} from '@ionic-native/geolocation';
 import {LoadingController, NavController, ToastController} from 'ionic-angular';
-import {GeoCodeLocation, GoogleMapsClient, GooglePlaceSearchResponse, LyftClient, ResultsItemType, RideRequestParams, RideResponseParams, SwaggerException} from '../../app/app.api';
+import {GeoCodeLocation, GoogleMapsClient, LyftClient, RequestStatus, ResultsItemType, RideRequestParams, RideResponseParams, SwaggerException} from '../../app/app.api';
 import {SocketClientService} from '../../app/services/socket-client.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {LoginPage} from '../login/login';
+import {LyftLocationType} from "../../app/services/lyft-webhook.interface";
 
 @Component({
   selector: 'page-home',
@@ -25,6 +26,8 @@ export class HomePage implements OnInit {
   urgentCareReady: boolean = false;
   rideRequested: boolean = false;
   rideStatus: string = "Please wait...";
+  rideAccepted: boolean = false;
+  driverLocation: LyftLocationType;
 
   constructor(private navController: NavController,
               private diagnostic: Diagnostic,
@@ -40,8 +43,30 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.socketService.onRideStatusUpdated().subscribe(
-      (data) => {
-        console.log(data);
+      (that: any) => {
+        let lyftWebhookParams = that.webhookResponse;
+        console.log(lyftWebhookParams);
+        switch (lyftWebhookParams.event.status) {
+          case RequestStatus.Accepted:
+            this.rideAccepted = true;
+            let lat = lyftWebhookParams.event.lat;
+            let lng = lyftWebhookParams.event.lng;
+
+            const allowable_distance = 0.15; // 10 miles
+            // const this_distance = Math.random();
+
+            this.driverLocation = {lat: lat, lng: lng, bearing: lyftWebhookParams.event.bearing};
+
+            //0.15;
+            // this.driverLocation.lat = 38.644726;
+            // this.driverLocation.lng = -90.284863;
+
+            console.log(this.driverLocation);
+
+            break;
+          default:
+            break
+        }
       }
     );
   }
@@ -54,33 +79,37 @@ export class HomePage implements OnInit {
 
   setGeoLocation() {
     this.geolocation.getCurrentPosition().then((position) => {
-      this.currentLoc.lat = position.coords.latitude;
-      this.currentLoc.lng = position.coords.longitude;
-      this.googleMapReady = true;if (this.urgentCareReady) {
-          this.rideStatus = "Call a Ride!";
+        this.currentLoc.lat = position.coords.latitude;
+        this.currentLoc.lng = position.coords.longitude;
+        this.googleMapReady = true;
+        if (this.urgentCareReady) {
+          this.rideStatus = "Request a Ride!";
         }
       },
-     (err) => {
-      //alert(err);
-    });
+      (err) => {
+        //alert(err);
+      });
   }
 
   getNearbyUrgentCare(): void {
-    this.googleMapsClient.getUrgentCares(new GeoCodeLocation({
-      lat: this.currentLoc.lat,
-      lng: this.currentLoc.lng
-    })).subscribe(
-      (googlePlaceSearchResponse: GooglePlaceSearchResponse): void => {
-        if (googlePlaceSearchResponse.results) {
-          const closestResult = this.findClosestResult(googlePlaceSearchResponse.results);
-          this.urgentCareLatLng = closestResult.geometry.location;
-          this.urgentCareReady = true;
-          if (this.googleMapReady) {
-            this.rideStatus = "Call a Ride!";
-          }
-        }
-      }
-    );
+    // this.googleMapsClient.getUrgentCares(new GeoCodeLocation({
+    //   lat: this.currentLoc.lat,
+    //   lng: this.currentLoc.lng
+    // })).subscribe(
+    //   (googlePlaceSearchResponse: GooglePlaceSearchResponse): void => {
+    //     if (googlePlaceSearchResponse.results) {
+    //       const closestResult = this.findClosestResult(googlePlaceSearchResponse.results);
+    //       this.urgentCareLatLng = closestResult.geometry.location;
+    //       this.urgentCareReady = true;
+    //       if (this.googleMapReady) {
+    //         this.rideStatus = "Request a Ride!";
+    //       }
+    //     }
+    //   }
+    // );
+
+    this.urgentCareLatLng = {lat: this.currentLoc.lat - 0.15, lng: this.currentLoc.lng - 0.15};
+    this.urgentCareReady = true;
   }
 
   findClosestResult(results: Array<ResultsItemType>): ResultsItemType {
@@ -136,6 +165,18 @@ export class HomePage implements OnInit {
         }).present();
         this.rideStatus = "Awaiting driver acceptance...";
         loadingInstance.dismissAll();
+
+        setTimeout(
+          (): void => {
+            console.log("accepting");
+            this.lyftClient.updateLyftRideStatus(rideResponseParams.ride_id, RequestStatus.Accepted).subscribe(
+              (): void => {
+                console.log("update complete");
+              }
+            );
+          },
+          5000
+        );
       },
       (error: SwaggerException): void => {
         console.error(error.response);
@@ -147,7 +188,7 @@ export class HomePage implements OnInit {
           cssClass: "toast-danger"
         }).present();
         this.rideRequested = false;
-        this.rideStatus = "Call a ride!";
+        this.rideStatus = "Request a ride!";
         loadingInstance.dismissAll();
       }
     );

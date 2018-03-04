@@ -17,6 +17,12 @@
   <ion-card *ngIf="googleMapReady && urgentCareReady" class="map-wrapper" align-items-center justify-content-center>
     <agm-map>
       <agm-direction [origin]="currentLoc" [destination]="urgentCareLatLng"></agm-direction>
+      <ng-container *ngIf="rideAccepted">
+        <p>Marker Ride Accepted</p>
+        <agm-marker [latitude]="driverLocation.lat" [longitude]="driverLocation.lng">
+          <agm-info-window><strong>Driver</strong></agm-info-window>
+        </agm-marker>
+      </ng-container>
     </agm-map>
   </ion-card>
   <ion-card *ngIf="!googleMapReady || !urgentCareReady" class="spinner" align-items-center justify-content-center>
@@ -30,9 +36,10 @@
       <div class='bullet'></div>
     </div>
   </div>
-</ion-content>
-<ion-footer class="footer">
   <ion-row align-items-center justify-content-center>
     <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
   </ion-row>
-</ion-footer>
+  <ng-container *ngIf="rideAccepted">
+    <p>Ride Accepted</p>
+  </ng-container>
+</ion-content>

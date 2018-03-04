@@ -14,7 +14,7 @@ interface DriverType {
     image_url: string;
 }
 
-interface LyftLocationType {
+export interface LyftLocationType {
     lat: number;
     bearing: number;
     lng: number;
