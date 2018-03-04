@@ -44,6 +44,7 @@ export class HomePage implements OnInit {
     amount: string;
     private platform: Platform;
     showLyftDetails: boolean = false;
+    rideAcceptedToastActive: boolean = false;
 
     constructor(private navController: NavController,
                 private diagnostic: Diagnostic,
@@ -96,14 +97,18 @@ export class HomePage implements OnInit {
                             this.driver = this.driverEvent.driver;
                             this.vehicle = this.driverEvent.vehicle;
 
-                            this.toastController.create({
+                            if (!this.rideAcceptedToastActive) {
+                              this.toastController.create({
                                 message: 'Your ride has been accepted!',
                                 duration: 5000,
                                 showCloseButton: true,
                                 closeButtonText: 'OK',
                                 cssClass: 'toast-success',
                                 position: 'top',
-                            }).present();
+                              }).present((): void => {
+                                this.rideAcceptedToastActive = true;
+                              });
+                            }
 
                             break;
                         default:
