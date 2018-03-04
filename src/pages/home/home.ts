@@ -88,7 +88,8 @@ export class HomePage implements OnInit {
               duration: 5000,
               showCloseButton: true,
               closeButtonText: "OK",
-              cssClass: "toast-success"
+              cssClass: "toast-success",
+              position: "top",
             }).present();
 
             break;
@@ -188,7 +189,8 @@ export class HomePage implements OnInit {
           duration: 5000,
           showCloseButton: true,
           closeButtonText: "OK",
-          cssClass: "toast-success"
+          cssClass: "toast-success",
+          position: "top",
         }).present();
         this.rideStatus = "Awaiting driver acceptance...";
         loadingInstance.dismissAll();
@@ -212,7 +214,8 @@ export class HomePage implements OnInit {
           duration: 5000,
           showCloseButton: true,
           closeButtonText: "OK",
-          cssClass: "toast-danger"
+          cssClass: "toast-danger",
+          position: "top",
         }).present();
         this.rideRequested = false;
         this.rideStatus = "Request a ride!";
@@ -221,10 +224,19 @@ export class HomePage implements OnInit {
     );
   }
 
-  getRandomPrice(): number {
-    let dollars: number = ((4 + Math.random() * 10) + Math.random());
-    let cents: number = Math.random();
-    return dollars + cents;
+  calculateSavings(): number {
+    return 600 - Math.ceil(Number(this.amount));
+  }
+
+  displayAmbulanceInfo(): void {
+    this.toastController.create({
+      message: "Ambulance rates start at around $600. Good choice going with Lyft!",
+      duration: 7000,
+      showCloseButton: true,
+      closeButtonText: "OK",
+      cssClass: "toast-lyft",
+      position: "middle",
+    }).present();
   }
 
   logout(): void {

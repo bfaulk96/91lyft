@@ -19,6 +19,12 @@ $colors: (
   lyftWhite: #f3f3f5,
 );
 
+.toast-lyft {
+  .toast-wrapper {
+    background-color: map-get($colors, lyft) !important;
+  }
+}
+
 .toast-success {
   .toast-wrapper {
     background-color: map-get($colors, secondary) !important;

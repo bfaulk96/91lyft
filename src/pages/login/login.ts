@@ -38,7 +38,8 @@ export class LoginPage implements OnInit {
           duration: 5000,
           showCloseButton: true,
           closeButtonText: "OK",
-          cssClass: "toast-success"
+          cssClass: "toast-success",
+          position: "top",
         }).present();
       },
       (error: any) => {
@@ -49,7 +50,8 @@ export class LoginPage implements OnInit {
           duration: 5000,
           showCloseButton: true,
           closeButtonText: "OK",
-          cssClass: "toast-danger"
+          cssClass: "toast-danger",
+          position: "top",
         }).present();
       }
     );

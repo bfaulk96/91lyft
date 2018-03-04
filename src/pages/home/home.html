@@ -64,7 +64,7 @@
       <hr>
       <ion-card-content padding class="slideDown{{(showLyftDetails) ? '' : ' ng-hide'}}">
         <div *ngIf="driverEvent.destination.address"><strong>Destination:</strong> {{driverEvent.destination.address}}</div>
-        <div><strong>Price:</strong> ${{amount}}</div>
+        <div><strong>Price:</strong> ${{amount}}<ion-badge item-end class="saved-money" (click)="displayAmbulanceInfo()">You saved over ${{calculateSavings()}}!</ion-badge></div>
         <div class="text-left">
           <strong>Car Details:</strong>
           <ul class="car-deets">
