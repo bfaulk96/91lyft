@@ -22,6 +22,7 @@ export class HomePage implements OnInit {
   zoom: number = 14;
   displayMap: boolean = false;
   googleMapReady: boolean = false;
+  urgentCareReady: boolean = false;
   rideRequested: boolean = false;
   rideStatus: string = "Please wait...";
 
@@ -38,10 +39,11 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.socketService.onRideStatusUpdated()
-      .subscribe((data) => {
+    this.socketService.onRideStatusUpdated().subscribe(
+      (data) => {
         console.log(data);
-      });
+      }
+    );
   }
 
 
@@ -52,12 +54,16 @@ export class HomePage implements OnInit {
 
   setGeoLocation() {
     this.geolocation.getCurrentPosition().then((position) => {
-      this.currentLoc.lat = position.coords.latitude;
-      this.currentLoc.lng = position.coords.longitude;
-      this.displayMap = true;
-    }, (err) => {
-      alert(err);
-    });
+        this.currentLoc.lat = position.coords.latitude;
+        this.currentLoc.lng = position.coords.longitude;
+        this.googleMapReady = true;
+        if (this.urgentCareReady) {
+          this.rideStatus = "Call a Ride!";
+        }
+      },
+      (err) => {
+        alert(err);
+      });
   }
 
   getNearbyUrgentCare(): void {
@@ -69,8 +75,10 @@ export class HomePage implements OnInit {
         if (googlePlaceSearchResponse.results) {
           const closestResult = this.findClosestResult(googlePlaceSearchResponse.results);
           this.urgentCareLatLng = closestResult.geometry.location;
-          this.googleMapReady = true;
-          this.rideStatus = "Call a Ride!";
+          this.urgentCareReady = true;
+          if (this.googleMapReady) {
+            this.rideStatus = "Call a Ride!";
+          }
         }
       }
     );
@@ -94,15 +102,16 @@ export class HomePage implements OnInit {
   }
 
   callARide(): void {
-    const loadingInstance = this.loadingController.create({
-      spinner: "dots",
-      content: "Submitting ride request...",
-      showBackdrop: true,
-      enableBackdropDismiss: false,
-      dismissOnPageChange: false
-    });
-    loadingInstance.present();
+    // const loadingInstance = this.loadingController.create({
+    //   spinner: "dots",
+    //   content: "Submitting ride request...",
+    //   showBackdrop: true,
+    //   enableBackdropDismiss: false,
+    //   dismissOnPageChange: false
+    // });
+    // loadingInstance.present();
     this.rideRequested = true;
+    this.rideStatus = "Requesting a ride...";
 
     this.lyftClient.lyftRideRequest(
       new RideRequestParams({
@@ -126,7 +135,8 @@ export class HomePage implements OnInit {
           closeButtonText: "OK",
           cssClass: "toast-success"
         }).present();
-        this.rideStatus= "Ride requested, awaiting driver acceptance...";
+        this.rideStatus = "Awaiting driver acceptance...";
+        // loadingInstance.dismissAll();
       },
       (error: SwaggerException): void => {
         console.error(error.response);
@@ -138,9 +148,8 @@ export class HomePage implements OnInit {
           cssClass: "toast-danger"
         }).present();
         this.rideRequested = false;
-      },
-      (): void => {
-        loadingInstance.dismissAll();
+        this.rideStatus = "Call a ride!";
+        // loadingInstance.dismissAll();
       }
     );
   }

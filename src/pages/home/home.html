@@ -14,17 +14,17 @@
   <ion-row align-items-center justify-content-center>
     <h1>Need a lyft to urgent care?</h1>
   </ion-row>
-  <ion-card *ngIf="displayMap" class="map-wrapper" align-items-center justify-content-center>
+  <ion-card *ngIf="googleMapReady && urgentCareReady" class="map-wrapper" align-items-center justify-content-center>
     <agm-map>
       <agm-direction [origin]="currentLoc" [destination]="urgentCareLatLng"></agm-direction>
     </agm-map>
   </ion-card>
-  <ion-card *ngIf="!displayMap" class="spinner" align-items-center justify-content-center>
+  <ion-card *ngIf="!googleMapReady || !urgentCareReady" class="spinner" align-items-center justify-content-center>
     <img src="./assets/imgs/loading-spinner.svg">
   </ion-card>
 </ion-content>
 <ion-footer class="footer">
   <ion-row align-items-center justify-content-center>
-    <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || rideRequested">{{rideStatus}}</button>
+    <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
   </ion-row>
 </ion-footer>

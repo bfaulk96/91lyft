@@ -16,7 +16,6 @@ export class MyApp implements OnInit {
   // rootPage: any = HomePage;
   // rootPage: any = LandingPage;
   static readonly USING_BROWSER = true;
-  static readonly MAPS_API_KEY = 'AIzaSyAuOVKs2NJGRrAnfEDgYULK68X_xk7k4KU';
   rootPage: any = LoginPage;
 
   constructor(private platform: Platform,

@@ -30,7 +30,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
         HttpClientModule,
         IonicModule.forRoot(MyApp),
         AgmCoreModule.forRoot({
-            apiKey: 'AIzaSyD3FgRTJxRDFpFgYWvrbQ9RpgITNs1KgvY'
+            apiKey: 'AIzaSyDp9DRzy7zCC55iWZhIldZx5JO4nfXi_B4'
         }),
         AgmDirectionModule,
         LoginPageModule

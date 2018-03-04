@@ -8,9 +8,12 @@ export class BaseClient {
   token: string = '';
 
   constructor() {
-    const authenticationToken: AuthenticationToken = JSON.parse(localStorage.getItem(AuthenticationToken.STORAGE_KEY));
-    if (authenticationToken != null && authenticationToken != undefined) {
-      this.token = authenticationToken.authToken;
+    const rawAuthenticationToken = localStorage.getItem(AuthenticationToken.STORAGE_KEY);
+    if (rawAuthenticationToken != undefined && rawAuthenticationToken != "undefined" && rawAuthenticationToken != null && rawAuthenticationToken != "null") {
+      const authenticationToken: AuthenticationToken = JSON.parse(rawAuthenticationToken);
+      if (authenticationToken != null && authenticationToken != undefined) {
+        this.token = authenticationToken.authToken;
+      }
     }
   }
 
