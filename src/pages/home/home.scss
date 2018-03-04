@@ -66,4 +66,24 @@ page-home {
   .lyft-btn:hover {
     background-color: darken(map-get($colors, lyft), 10);
   }
+
+  .loader {
+    animation: spin;
+    animation-duration: 2.5s;
+    animation-iteration-count: infinite;
+
+    border-radius: 50%;
+    border: solid 10px red;
+    border-top-color: blue;
+  }
+
+  @keyframes spin {
+    from {
+      rotation: 0;
+    }
+
+    to {
+      rotation: 360deg;
+    }
+  }
 }

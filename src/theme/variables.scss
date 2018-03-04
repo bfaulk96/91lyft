@@ -29,3 +29,22 @@ $colors: (
     background-color: map-get($colors, danger) !important;
   }
 }
+
+@font-face {
+  font-family: "Gudea";
+  src: url("../assets/fonts/Gudea-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Rubik";
+  src: url("../assets/fonts/Rubik-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "MuktaVaani";
+  src: url("../assets/fonts/MuktaVaani-Regular.ttf") format("truetype");
+}
+
+* {
+  font-family: "Rubik", serif;
+}

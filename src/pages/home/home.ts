@@ -108,9 +108,9 @@ export class HomePage implements OnInit {
       enableBackdropDismiss: false,
       dismissOnPageChange: false
     });
-    loadingInstance.present();
     this.rideRequested = true;
     this.rideStatus = "Requesting a ride...";
+    loadingInstance.present();
 
     this.lyftClient.lyftRideRequest(
       new RideRequestParams({
@@ -135,7 +135,7 @@ export class HomePage implements OnInit {
           cssClass: "toast-success"
         }).present();
         this.rideStatus = "Awaiting driver acceptance...";
-        // loadingInstance.dismissAll();
+        loadingInstance.dismissAll();
       },
       (error: SwaggerException): void => {
         console.error(error.response);
@@ -148,7 +148,7 @@ export class HomePage implements OnInit {
         }).present();
         this.rideRequested = false;
         this.rideStatus = "Call a ride!";
-        // loadingInstance.dismissAll();
+        loadingInstance.dismissAll();
       }
     );
   }
