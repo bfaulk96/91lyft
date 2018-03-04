@@ -62,6 +62,7 @@ export class HomePage implements OnInit {
     ngOnInit(): void {
         this.socketService.rideIdObs
             .mergeMap((rideId: string) => {
+                console.log(rideId);
                 if (rideId !== '') {
                     return this.socketService.onRideStatusUpdated(rideId);
                 }
