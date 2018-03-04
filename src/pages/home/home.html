@@ -23,7 +23,7 @@
           <agm-info-window>
             <strong>{{driver.first_name}}</strong>
             <img class="vehicle-image" src="{{vehicle.image_url}}">
-            <p><ion-icon class='phone' ios="ios-phone-portrait" md="md-phone-portrait"></ion-icon> {{driver.phone_number}}</p>
+            <p><a class="phone-num" href="tel:{{driver.phone_number}}"><ion-icon class='phone' ios="ios-phone-portrait" md="md-phone-portrait"></ion-icon> {{driver.phone_number | phoneNumber}}</a></p>
             <p><ion-icon class='star' ios="ios-star" md="md-star"></ion-icon> {{driver.rating}}/5.0</p>
           </agm-info-window>
         </agm-marker>
@@ -45,19 +45,26 @@
   </ng-container>
   <ng-container *ngIf="rideAccepted">
     <ion-card class="text-left driver-info">
-      <ion-card-header>
+      <ion-card-header class="expandable-header" (click)="showLyftDetails = !showLyftDetails">
         <div class="text-center driver-details-title">
           <h2 class="text-center">Lyft Details</h2>
         </div>
-        <br>
         <div><strong>Driver:</strong> {{driver.first_name}}</div>
-        <div><strong>Phone:</strong> {{driver.phone_number}}</div>
+        <div><strong>Phone:</strong> <a class="phone-num" href="tel:{{driver.phone_number}}">{{driver.phone_number | phoneNumber}}</a></div>
         <div><strong>Rating:</strong> {{driver.rating}}/5.0</div>
+        <div class="helpful-hint">
+          <ng-container *ngIf="!showLyftDetails">
+            <ion-icon ios="ios-add" md="md-add"></ion-icon> Additional Info...
+          </ng-container>
+          <ng-container *ngIf="showLyftDetails">
+            <ion-icon ios="ios-remove" md="md-remove"></ion-icon> Additional Info...
+          </ng-container>
+        </div>
       </ion-card-header>
       <hr>
-      <ion-card-content>
-        <div><strong>Price:</strong> ${{amount}}</div>
+      <ion-card-content padding class="slideDown{{(showLyftDetails) ? '' : ' ng-hide'}}">
         <div *ngIf="driverEvent.destination.address"><strong>Destination:</strong> {{driverEvent.destination.address}}</div>
+        <div><strong>Price:</strong> ${{amount}}</div>
         <div class="text-left">
           <strong>Car Details:</strong>
           <ul class="car-deets">

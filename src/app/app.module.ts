@@ -18,12 +18,14 @@ import { MyApp } from './app';
 import { API_BASE_URL, GoogleMapsClient, LyftClient, UserClient } from './app.api';
 import { SocketClientService } from './services/socket-client.service';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import {PhoneNumberPipe} from "../pipes/phone-number.pipe";
 
 @NgModule({
     declarations: [
         MyApp,
         HomePage,
-        LandingPage
+        LandingPage,
+        PhoneNumberPipe,
     ],
     imports: [
         BrowserModule,

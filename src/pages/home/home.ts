@@ -32,6 +32,8 @@ export class HomePage implements OnInit {
   driver: DriverType;
   vehicle: VehicleType;
   amount: string;
+  private platform: Platform;
+  showLyftDetails: boolean = false;
 
   constructor(private navController: NavController,
               private diagnostic: Diagnostic,
@@ -43,7 +45,8 @@ export class HomePage implements OnInit {
               private socketService: SocketClientService,
               private loadingController: LoadingController,
               private toastController: ToastController,
-              private platform: Platform) {
+              private pf: Platform) {
+    this.platform = pf;
   }
 
   ngOnInit(): void {
