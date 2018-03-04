@@ -266,7 +266,7 @@ export class HomePage implements OnInit {
                             }
                         );
                     },
-                    5000
+                    8000
                 );
             },
             (error: SwaggerException): void => {
