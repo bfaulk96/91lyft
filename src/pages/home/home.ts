@@ -49,17 +49,26 @@ export class HomePage implements OnInit {
         switch (lyftWebhookParams.event.status) {
           case RequestStatus.Accepted:
             this.rideAccepted = true;
-            let lat = lyftWebhookParams.event.lat;
-            let lng = lyftWebhookParams.event.lng;
+            let lat = lyftWebhookParams.event.location.lat;
+            let lng = lyftWebhookParams.event.location.lng;
 
+            // Max radius in distance that the lyft driver can spawn at.
             const allowable_distance = 0.15; // 10 miles
-            // const this_distance = Math.random();
 
-            this.driverLocation = {lat: lat, lng: lng, bearing: lyftWebhookParams.event.bearing};
+            // The distances from the origin. These two points WILL fall on the radius defined above.
+            let lat_dist = Math.random() * allowable_distance;
+            let lng_dist = Math.sqrt(Math.pow(allowable_distance, 2) - Math.pow(lat_dist, 2));
 
-            //0.15;
-            // this.driverLocation.lat = 38.644726;
-            // this.driverLocation.lng = -90.284863;
+            // Scale the lat and long towards the origin by a random amount or potentially 0.
+            lat_dist *= Math.random();
+            lng_dist *= Math.random();
+
+            // Now randomly negate the lat or long to allow for placement in any of the four quadrants.
+            lat_dist *= Math.random() >= 0.5 ? 1 : -1;
+            lng_dist *= Math.random() >= 0.5 ? 1 : -1;
+
+            // Add these values to the origin value to randomly position the Lyft driver around the user within the allowed_distance miles.
+            this.driverLocation = {lat: lat + lat_dist, lng: lng + lng_dist, bearing: undefined};
 
             console.log(this.driverLocation);
 
