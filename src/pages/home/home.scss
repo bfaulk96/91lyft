@@ -48,6 +48,7 @@ page-home {
 
   .spinner {
     min-height: 300px;
+    border: 2px solid map-get($colors, lyft);
   }
 
   .map-wrapper {
@@ -86,4 +87,6 @@ page-home {
       rotation: 360deg;
     }
   }
+
+
 }

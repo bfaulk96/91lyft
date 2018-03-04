@@ -22,7 +22,14 @@
   <ion-card *ngIf="!googleMapReady || !urgentCareReady" class="spinner" align-items-center justify-content-center>
     <img src="./assets/imgs/loading-spinner.svg">
   </ion-card>
-  <ion-spinner name="crescent"></ion-spinner>
+  <div class="loading-wrapper">
+    <div class='loading'>
+      <div class='bullet'></div>
+      <div class='bullet'></div>
+      <div class='bullet'></div>
+      <div class='bullet'></div>
+    </div>
+  </div>
 </ion-content>
 <ion-footer class="footer">
   <ion-row align-items-center justify-content-center>

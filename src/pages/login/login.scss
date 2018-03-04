@@ -9,6 +9,10 @@ page-login {
     color: map-get($colors, lyftWhite) !important;
   }
 
+  .item-block *:active {
+    border-bottom: none;
+  }
+
   .list-ios > .item-block:first-child {
     border-top: none;
   }
@@ -17,8 +21,9 @@ page-login {
     border-bottom: none;
   }
 
-  .list-md .item-input:last-child {
+  .list-md .item-input *, .list-md .item-input:last-child {
     border-bottom: none;
+    box-shadow: none !important;
   }
 
   .item-inner {
