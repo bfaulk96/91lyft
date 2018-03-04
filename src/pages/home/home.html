@@ -24,18 +24,17 @@
         </agm-marker>
       </ng-container>
     </agm-map>
-  </ion-card>
-  <ion-card *ngIf="!googleMapReady || !urgentCareReady" class="spinner" align-items-center justify-content-center>
-    <img src="./assets/imgs/loading-spinner.svg">
-  </ion-card>
-  <div class="loading-wrapper">
-    <div class='loading'>
+    <div class="block-map" *ngIf="rideRequested"></div>
+    <div class='loading' *ngIf="rideRequested">
       <div class='bullet'></div>
       <div class='bullet'></div>
       <div class='bullet'></div>
       <div class='bullet'></div>
     </div>
-  </div>
+  </ion-card>
+  <ion-card *ngIf="!googleMapReady || !urgentCareReady" class="spinner" align-items-center justify-content-center>
+    <img src="./assets/imgs/loading-spinner.svg">
+  </ion-card>
   <ion-row align-items-center justify-content-center>
     <button ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
   </ion-row>
