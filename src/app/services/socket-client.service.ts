@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 import * as io from 'socket.io-client';
 
 @Injectable()
 export class SocketClientService {
 
     private socket: SocketIOClient.Socket;
-    private rideIdSub: Subject<string> = new Subject<string>();
+    private rideIdSub: ReplaySubject<string> = new ReplaySubject<string>();
     rideIdObs = this.rideIdSub.asObservable();
 
     constructor() {
