@@ -60,7 +60,10 @@ export class HomePage implements OnInit {
     }
 
     ngOnInit(): void {
-        this.socketService.onRideStatusUpdated()
+        this.socketService.rideIdObs
+            .mergeMap((rideId: string) => {
+                return this.socketService.onRideStatusUpdated(rideId);
+            })
             .subscribe(
                 (lyftWebhookParamsWrapper: any) => {
                     console.log(lyftWebhookParamsWrapper);
@@ -242,7 +245,7 @@ export class HomePage implements OnInit {
         ).subscribe(
             (rideResponseParams: RideResponseParams): void => {
                 console.log(rideResponseParams);
-                this.socketService.getNameSpace2(rideResponseParams.ride_id);
+                this.socketService.getRideId(rideResponseParams.ride_id);
                 this.toastController.create({
                     message: 'Your ride has been requested!',
                     duration: 5000,
