@@ -1,5 +1,5 @@
 import {AgmMap} from '@agm/core';
-import {Platform} from 'ionic-angular';
+import {AlertController, Platform} from 'ionic-angular';
 import {HttpClient} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import {Diagnostic} from '@ionic-native/diagnostic';
@@ -48,7 +48,8 @@ export class HomePage implements OnInit {
               private socketService: SocketClientService,
               private loadingController: LoadingController,
               private toastController: ToastController,
-              private pf: Platform) {
+              private pf: Platform,
+              private alertCtrl: AlertController) {
     this.platform = pf;
   }
 
@@ -157,6 +158,30 @@ export class HomePage implements OnInit {
     );
 
     return closestResult;
+  }
+
+  presentConfirm() {
+    let alert = this.alertCtrl.create({
+      title: 'Confirm action',
+      message: 'Are you sure you want to request a ride? This will cost money.',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            console.log('Yes clicked');
+            this.callARide()
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 
   callARide(): void {
