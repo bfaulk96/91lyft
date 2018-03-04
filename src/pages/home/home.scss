@@ -1,12 +1,38 @@
 page-home {
 
-  .home-body {
+  ion-icon {
+    color: #9c0000;
+    vertical-align: middle;
+  }
+
+  ion-title {
+    position: absolute;
     width: 100%;
+    left: 0;
+    bottom: 0;
     text-align: center;
   }
 
-  ion-icon {
-    color: #9c0000;
+  ion-content {
+    border-bottom: none !important;
+    background-color: map-get($colors, lyftGrey) !important;
+  }
+
+  agm-map {
+    height: 300px;
+  }
+
+  ion-footer {
+    border-top: none !important;
+  }
+
+  .footer {
+    margin-bottom: 15px;
+  }
+
+  .home-body {
+    width: 100%;
+    text-align: center;
   }
 
   .map-card {
@@ -28,10 +54,6 @@ page-home {
     border: 2px solid map-get($colors, lyft);
   }
 
-  agm-map {
-    height: 300px;
-  }
-
   .lyft-btn {
     width: 90%;
     height: 80px;
@@ -43,18 +65,5 @@ page-home {
 
   .lyft-btn:hover {
     background-color: darken(map-get($colors, lyft), 10);
-  }
-
-  ion-content {
-    border-bottom: none !important;
-    background-color: map-get($colors, lyftGrey) !important;
-  }
-
-  ion-footer {
-    border-top: none !important;
-  }
-
-  .footer {
-    margin-bottom: 15px;
   }
 }

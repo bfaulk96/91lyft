@@ -54,16 +54,15 @@ export class HomePage implements OnInit {
 
   setGeoLocation() {
     this.geolocation.getCurrentPosition().then((position) => {
-        this.currentLoc.lat = position.coords.latitude;
-        this.currentLoc.lng = position.coords.longitude;
-        this.googleMapReady = true;
-        if (this.urgentCareReady) {
+      this.currentLoc.lat = position.coords.latitude;
+      this.currentLoc.lng = position.coords.longitude;
+      this.googleMapReady = true;if (this.urgentCareReady) {
           this.rideStatus = "Call a Ride!";
         }
       },
-      (err) => {
-        alert(err);
-      });
+     (err) => {
+      //alert(err);
+    });
   }
 
   getNearbyUrgentCare(): void {
@@ -102,14 +101,14 @@ export class HomePage implements OnInit {
   }
 
   callARide(): void {
-    // const loadingInstance = this.loadingController.create({
-    //   spinner: "dots",
-    //   content: "Submitting ride request...",
-    //   showBackdrop: true,
-    //   enableBackdropDismiss: false,
-    //   dismissOnPageChange: false
-    // });
-    // loadingInstance.present();
+    const loadingInstance = this.loadingController.create({
+      spinner: "dots",
+      content: "Submitting ride request...",
+      showBackdrop: true,
+      enableBackdropDismiss: false,
+      dismissOnPageChange: false
+    });
+    loadingInstance.present();
     this.rideRequested = true;
     this.rideStatus = "Requesting a ride...";
 
@@ -159,5 +158,3 @@ export class HomePage implements OnInit {
     this.navController.setRoot(LoginPage);
   }
 }
-
-// 839964606160592302

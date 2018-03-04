@@ -4,6 +4,7 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {HomePage} from "../home/home";
 import {MyApp} from "../../app/app";
 import { InAppBrowser, InAppBrowserOptions } from "@ionic-native/in-app-browser";
+import { Platform } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -19,7 +20,8 @@ export class LoginPage implements OnInit {
   public constructor(private navController: NavController,
                      private authenticationService: AuthenticationService,
                      private toastController: ToastController,
-                     private inAppBrowser: InAppBrowser) {
+                     private inAppBrowser: InAppBrowser,
+                     private platform: Platform) {
   }
 
   ngOnInit(): void {
@@ -58,6 +60,10 @@ export class LoginPage implements OnInit {
       zoom: 'no',
       toolbarposition: 'top'
     };
-    const browser = this.inAppBrowser.create(url, '_blank', options);
+    if (this.platform.is('android')) {
+      this.inAppBrowser.create(url, '_blank', options);
+    } else {
+      this.inAppBrowser.create(url, '_system', options);
+    }
   }
 }
