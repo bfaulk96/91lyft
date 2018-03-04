@@ -54,10 +54,10 @@
         <div><strong>Rating:</strong> {{driver.rating}}/5.0</div>
         <div class="helpful-hint">
           <ng-container *ngIf="!showLyftDetails">
-            <ion-icon ios="ios-add" md="md-add"></ion-icon> Additional Info...
+            <ion-icon ios="ios-add" md="md-add"></ion-icon> Additional Info
           </ng-container>
           <ng-container *ngIf="showLyftDetails">
-            <ion-icon ios="ios-remove" md="md-remove"></ion-icon> Additional Info...
+            <ion-icon ios="ios-remove" md="md-remove"></ion-icon> Additional Info
           </ng-container>
         </div>
       </ion-card-header>
@@ -73,6 +73,7 @@
             <li><strong>Color: </strong>{{vehicle.color}}</li>
           </ul>
         </div>
+        <img class="driver-image" [src]="driver.image_url" />
       </ion-card-content>
     </ion-card>
   </ng-container>
