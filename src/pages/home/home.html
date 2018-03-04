@@ -20,7 +20,12 @@
       <ng-container *ngIf="rideAccepted">
         <p>Marker Ride Accepted</p>
         <agm-marker [latitude]="driverLocation.lat" [longitude]="driverLocation.lng">
-          <agm-info-window><strong>Driver</strong></agm-info-window>
+          <agm-info-window>
+            <strong>{{driver.first_name}}</strong>
+            <img class="vehicle-image" src="{{vehicle.image_url}}">
+            <p>P: {{driver.phone_number}}</p>
+            <p>{{driver.rating}}/5.0</p>
+          </agm-info-window>
         </agm-marker>
       </ng-container>
     </agm-map>

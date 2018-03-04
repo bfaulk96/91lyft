@@ -1,13 +1,13 @@
 import { Passenger, RequestStatus } from '../app.api';
 
-interface Loctype {
+export interface Loctype {
     lat: number;
     lng: number;
     eta_seconds?: number;
     address?: string;
 }
 
-interface DriverType {
+export interface DriverType {
     phone_number: string;
     rating: string;
     first_name: string;
@@ -20,7 +20,7 @@ export interface LyftLocationType {
     lng: number;
 }
 
-interface VehicleType {
+export interface VehicleType {
     color: string;
     make: string;
     license_plate: string;
@@ -30,7 +30,7 @@ interface VehicleType {
     model: string;
 }
 
-interface EventType {
+export interface EventType {
     origin: Loctype;
     passenger: Passenger;
     requested_at: string;
@@ -50,7 +50,7 @@ interface EventType {
     ride_profile: string;
 }
 
-interface PriceType {
+export interface PriceType {
     currency: string;
     amount: number;
     description: string;

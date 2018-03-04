@@ -9,7 +9,7 @@ import {GeoCodeLocation, GoogleMapsClient, LyftClient, RequestStatus, ResultsIte
 import {SocketClientService} from '../../app/services/socket-client.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {LoginPage} from '../login/login';
-import {LyftLocationType} from "../../app/services/lyft-webhook.interface";
+import {DriverType, LyftLocationType, VehicleType} from "../../app/services/lyft-webhook.interface";
 
 @Component({
   selector: 'page-home',
@@ -28,6 +28,8 @@ export class HomePage implements OnInit {
   rideStatus: string = "Please wait...";
   rideAccepted: boolean = false;
   driverLocation: LyftLocationType;
+  driver: DriverType;
+  vehicle: VehicleType;
 
   constructor(private navController: NavController,
               private diagnostic: Diagnostic,
@@ -43,9 +45,9 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.socketService.onRideStatusUpdated().subscribe(
-      (that: any) => {
-        let lyftWebhookParams = that.webhookResponse;
-        console.log(lyftWebhookParams);
+      (lyftWebhookParamsWrapper: any) => {
+        console.log(lyftWebhookParamsWrapper);
+        let lyftWebhookParams = lyftWebhookParamsWrapper.webhookResponse;
         switch (lyftWebhookParams.event.status) {
           case RequestStatus.Accepted:
             this.rideAccepted = true;
@@ -70,7 +72,8 @@ export class HomePage implements OnInit {
             // Add these values to the origin value to randomly position the Lyft driver around the user within the allowed_distance miles.
             this.driverLocation = {lat: lat + lat_dist, lng: lng + lng_dist, bearing: undefined};
 
-            console.log(this.driverLocation);
+            this.driver = lyftWebhookParams.event.driver;
+            this.vehicle = lyftWebhookParams.event.vehicle;
 
             break;
           default:
