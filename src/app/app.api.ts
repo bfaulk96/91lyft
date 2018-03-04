@@ -32,30 +32,34 @@ export class GoogleMapsClient extends BaseClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         super();
         this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
+        this.baseUrl = baseUrl ? baseUrl : '';
     }
 
     /**
      * @return Ok
      */
-    getUrgentCares(latLngParams: GeoCodeLocation): Observable<GooglePlaceSearchResponse> {
-        let url_ = this.baseUrl + "/googles/get-urgent-cares";
-        url_ = url_.replace(/[?&]$/, "");
+    getUrgentCares(latLngParams: GeoCodeLocation, openNow: boolean): Observable<GooglePlaceSearchResponse> {
+        let url_ = this.baseUrl + '/googles/get-urgent-cares?';
+        if (openNow === undefined || openNow === null)
+            throw new Error('The parameter \'openNow\' must be defined and cannot be null.');
+        else
+            url_ += 'openNow=' + encodeURIComponent('' + openNow) + '&';
+        url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(latLngParams);
 
         let options_ : any = {
             body: content_,
-            observe: "response",
-            responseType: "blob",
+            observe: 'response',
+            responseType: 'blob',
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             })
         };
 
         return Observable.fromPromise(this.transformOptions(options_)).flatMap(transformedOptions_ => {
-            return this.http.request("post", url_, transformedOptions_);
+            return this.http.request('post', url_, transformedOptions_);
         }).flatMap((response_: any) => {
             return this.processGetUrgentCares(response_);
         }).catch((response_: any) => {
@@ -80,13 +84,13 @@ export class GoogleMapsClient extends BaseClient {
         if (status === 200) {
             return blobToText(responseBlob).flatMap(_responseText => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = resultData200 ? GooglePlaceSearchResponse.fromJS(resultData200) : new GooglePlaceSearchResponse();
             return Observable.of(result200);
             });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).flatMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException('An unexpected server error occurred.', status, _responseText, _headers);
             });
         }
         return Observable.of<GooglePlaceSearchResponse>(<any>null);
@@ -102,30 +106,30 @@ export class LyftClient extends BaseClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         super();
         this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
+        this.baseUrl = baseUrl ? baseUrl : '';
     }
 
     /**
      * @return Ok
      */
     lyftRideRequest(lyftRideRequest: RideRequestParams): Observable<RideResponseParams> {
-        let url_ = this.baseUrl + "/lyfts/request-ride";
-        url_ = url_.replace(/[?&]$/, "");
+        let url_ = this.baseUrl + '/lyfts/request-ride';
+        url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(lyftRideRequest);
 
         let options_ : any = {
             body: content_,
-            observe: "response",
-            responseType: "blob",
+            observe: 'response',
+            responseType: 'blob',
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             })
         };
 
         return Observable.fromPromise(this.transformOptions(options_)).flatMap(transformedOptions_ => {
-            return this.http.request("post", url_, transformedOptions_);
+            return this.http.request('post', url_, transformedOptions_);
         }).flatMap((response_: any) => {
             return this.processLyftRideRequest(response_);
         }).catch((response_: any) => {
@@ -150,13 +154,13 @@ export class LyftClient extends BaseClient {
         if (status === 200) {
             return blobToText(responseBlob).flatMap(_responseText => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = resultData200 ? RideResponseParams.fromJS(resultData200) : new RideResponseParams();
             return Observable.of(result200);
             });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).flatMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException('An unexpected server error occurred.', status, _responseText, _headers);
             });
         }
         return Observable.of<RideResponseParams>(<any>null);
@@ -166,27 +170,27 @@ export class LyftClient extends BaseClient {
      * @return Ok
      */
     updateLyftRideStatus(rideId: string, requestStatus: RequestStatus): Observable<any> {
-        let url_ = this.baseUrl + "/lyfts/update-ride-status/{rideId}?";
+        let url_ = this.baseUrl + '/lyfts/update-ride-status/{rideId}?';
         if (rideId === undefined || rideId === null)
-            throw new Error("The parameter 'rideId' must be defined.");
-        url_ = url_.replace("{rideId}", encodeURIComponent("" + rideId)); 
+            throw new Error('The parameter \'rideId\' must be defined.');
+        url_ = url_.replace('{rideId}', encodeURIComponent('' + rideId));
         if (requestStatus === undefined || requestStatus === null)
-            throw new Error("The parameter 'requestStatus' must be defined and cannot be null.");
+            throw new Error('The parameter \'requestStatus\' must be defined and cannot be null.');
         else
-            url_ += "requestStatus=" + encodeURIComponent("" + requestStatus) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
+            url_ += 'requestStatus=' + encodeURIComponent('' + requestStatus) + '&';
+        url_ = url_.replace(/[?&]$/, '');
 
         let options_ : any = {
-            observe: "response",
-            responseType: "blob",
+            observe: 'response',
+            responseType: 'blob',
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             })
         };
 
         return Observable.fromPromise(this.transformOptions(options_)).flatMap(transformedOptions_ => {
-            return this.http.request("get", url_, transformedOptions_);
+            return this.http.request('get', url_, transformedOptions_);
         }).flatMap((response_: any) => {
             return this.processUpdateLyftRideStatus(response_);
         }).catch((response_: any) => {
@@ -211,7 +215,7 @@ export class LyftClient extends BaseClient {
         if (status === 200) {
             return blobToText(responseBlob).flatMap(_responseText => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
             if (resultData200) {
                 result200 = {};
                 for (let key in resultData200) {
@@ -223,7 +227,7 @@ export class LyftClient extends BaseClient {
             });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).flatMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException('An unexpected server error occurred.', status, _responseText, _headers);
             });
         }
         return Observable.of<any>(<any>null);
@@ -239,30 +243,30 @@ export class UserClient extends BaseClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         super();
         this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
+        this.baseUrl = baseUrl ? baseUrl : '';
     }
 
     /**
      * @return Ok
      */
     register(registerParams: UserRegisterParams): Observable<UserVm> {
-        let url_ = this.baseUrl + "/users/register";
-        url_ = url_.replace(/[?&]$/, "");
+        let url_ = this.baseUrl + '/users/register';
+        url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(registerParams);
 
         let options_ : any = {
             body: content_,
-            observe: "response",
-            responseType: "blob",
+            observe: 'response',
+            responseType: 'blob',
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             })
         };
 
         return Observable.fromPromise(this.transformOptions(options_)).flatMap(transformedOptions_ => {
-            return this.http.request("post", url_, transformedOptions_);
+            return this.http.request('post', url_, transformedOptions_);
         }).flatMap((response_: any) => {
             return this.processRegister(response_);
         }).catch((response_: any) => {
@@ -287,13 +291,13 @@ export class UserClient extends BaseClient {
         if (status === 200) {
             return blobToText(responseBlob).flatMap(_responseText => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = resultData200 ? UserVm.fromJS(resultData200) : new UserVm();
             return Observable.of(result200);
             });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).flatMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException('An unexpected server error occurred.', status, _responseText, _headers);
             });
         }
         return Observable.of<UserVm>(<any>null);
@@ -303,23 +307,23 @@ export class UserClient extends BaseClient {
      * @return Ok
      */
     login(loginParams: UserLoginParams): Observable<UserLoginResponse> {
-        let url_ = this.baseUrl + "/users/login";
-        url_ = url_.replace(/[?&]$/, "");
+        let url_ = this.baseUrl + '/users/login';
+        url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(loginParams);
 
         let options_ : any = {
             body: content_,
-            observe: "response",
-            responseType: "blob",
+            observe: 'response',
+            responseType: 'blob',
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             })
         };
 
         return Observable.fromPromise(this.transformOptions(options_)).flatMap(transformedOptions_ => {
-            return this.http.request("post", url_, transformedOptions_);
+            return this.http.request('post', url_, transformedOptions_);
         }).flatMap((response_: any) => {
             return this.processLogin(response_);
         }).catch((response_: any) => {
@@ -344,13 +348,13 @@ export class UserClient extends BaseClient {
         if (status === 200) {
             return blobToText(responseBlob).flatMap(_responseText => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = resultData200 ? UserLoginResponse.fromJS(resultData200) : new UserLoginResponse();
             return Observable.of(result200);
             });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).flatMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            return throwException('An unexpected server error occurred.', status, _responseText, _headers);
             });
         }
         return Observable.of<UserLoginResponse>(<any>null);
@@ -372,8 +376,8 @@ export class LocationType implements ILocationType {
 
     init(data?: any) {
         if (data) {
-            this.lat = data["lat"] !== undefined ? data["lat"] : <any>null;
-            this.lng = data["lng"] !== undefined ? data["lng"] : <any>null;
+            this.lat = data['lat'] !== undefined ? data['lat'] : <any>null;
+            this.lng = data['lng'] !== undefined ? data['lng'] : <any>null;
         }
     }
 
@@ -386,8 +390,8 @@ export class LocationType implements ILocationType {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["lat"] = this.lat !== undefined ? this.lat : <any>null;
-        data["lng"] = this.lng !== undefined ? this.lng : <any>null;
+        data['lat'] = this.lat !== undefined ? this.lat : <any>null;
+        data['lng'] = this.lng !== undefined ? this.lng : <any>null;
         return data; 
     }
 }
@@ -411,7 +415,7 @@ export class GeometryType implements IGeometryType {
 
     init(data?: any) {
         if (data) {
-            this.location = data["location"] ? LocationType.fromJS(data["location"]) : new LocationType();
+            this.location = data['location'] ? LocationType.fromJS(data['location']) : new LocationType();
         }
     }
 
@@ -424,7 +428,7 @@ export class GeometryType implements IGeometryType {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["location"] = this.location ? this.location.toJSON() : <any>null;
+        data['location'] = this.location ? this.location.toJSON() : <any>null;
         return data; 
     }
 }
@@ -447,7 +451,7 @@ export class OpeningHoursType implements IOpeningHoursType {
 
     init(data?: any) {
         if (data) {
-            this.open_now = data["open_now"] !== undefined ? data["open_now"] : <any>null;
+            this.open_now = data['open_now'] !== undefined ? data['open_now'] : <any>null;
         }
     }
 
@@ -460,7 +464,7 @@ export class OpeningHoursType implements IOpeningHoursType {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["open_now"] = this.open_now !== undefined ? this.open_now : <any>null;
+        data['open_now'] = this.open_now !== undefined ? this.open_now : <any>null;
         return data; 
     }
 }
@@ -486,16 +490,16 @@ export class PhotosItemType implements IPhotosItemType {
 
     init(data?: any) {
         if (data) {
-            this.height = data["height"] !== undefined ? data["height"] : <any>null;
-            if (data["html_attributions"]) {
+            this.height = data['height'] !== undefined ? data['height'] : <any>null;
+            if (data['html_attributions']) {
                 this.html_attributions = {};
-                for (let key in data["html_attributions"]) {
-                    if (data["html_attributions"].hasOwnProperty(key))
-                        this.html_attributions[key] = data["html_attributions"][key];
+                for (let key in data['html_attributions']) {
+                    if (data['html_attributions'].hasOwnProperty(key))
+                        this.html_attributions[key] = data['html_attributions'][key];
                 }
             }
-            this.photo_reference = data["photo_reference"] !== undefined ? data["photo_reference"] : <any>null;
-            this.width = data["width"] !== undefined ? data["width"] : <any>null;
+            this.photo_reference = data['photo_reference'] !== undefined ? data['photo_reference'] : <any>null;
+            this.width = data['width'] !== undefined ? data['width'] : <any>null;
         }
     }
 
@@ -508,16 +512,16 @@ export class PhotosItemType implements IPhotosItemType {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["height"] = this.height !== undefined ? this.height : <any>null;
+        data['height'] = this.height !== undefined ? this.height : <any>null;
         if (this.html_attributions) {
-            data["html_attributions"] = {};
+            data['html_attributions'] = {};
             for (let key in this.html_attributions) {
                 if (this.html_attributions.hasOwnProperty(key))
-                    data["html_attributions"][key] = this.html_attributions[key] !== undefined ? this.html_attributions[key] : <any>null;
+                    data['html_attributions'][key] = this.html_attributions[key] !== undefined ? this.html_attributions[key] : <any>null;
             }
         }
-        data["photo_reference"] = this.photo_reference !== undefined ? this.photo_reference : <any>null;
-        data["width"] = this.width !== undefined ? this.width : <any>null;
+        data['photo_reference'] = this.photo_reference !== undefined ? this.photo_reference : <any>null;
+        data['width'] = this.width !== undefined ? this.width : <any>null;
         return data; 
     }
 }
@@ -544,8 +548,8 @@ export class AltIdsItemType implements IAltIdsItemType {
 
     init(data?: any) {
         if (data) {
-            this.place_id = data["place_id"] !== undefined ? data["place_id"] : <any>null;
-            this.scope = data["scope"] !== undefined ? data["scope"] : <any>null;
+            this.place_id = data['place_id'] !== undefined ? data['place_id'] : <any>null;
+            this.scope = data['scope'] !== undefined ? data['scope'] : <any>null;
         }
     }
 
@@ -558,8 +562,8 @@ export class AltIdsItemType implements IAltIdsItemType {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["place_id"] = this.place_id !== undefined ? this.place_id : <any>null;
-        data["scope"] = this.scope !== undefined ? this.scope : <any>null;
+        data['place_id'] = this.place_id !== undefined ? this.place_id : <any>null;
+        data['scope'] = this.scope !== undefined ? this.scope : <any>null;
         return data; 
     }
 }
@@ -594,30 +598,30 @@ export class ResultsItemType implements IResultsItemType {
 
     init(data?: any) {
         if (data) {
-            this.geometry = data["geometry"] ? GeometryType.fromJS(data["geometry"]) : new GeometryType();
-            this.icon = data["icon"] !== undefined ? data["icon"] : <any>null;
-            this.id = data["id"] !== undefined ? data["id"] : <any>null;
-            this.name = data["name"] !== undefined ? data["name"] : <any>null;
-            this.opening_hours = data["opening_hours"] ? OpeningHoursType.fromJS(data["opening_hours"]) : new OpeningHoursType();
-            if (data["photos"] && data["photos"].constructor === Array) {
+            this.geometry = data['geometry'] ? GeometryType.fromJS(data['geometry']) : new GeometryType();
+            this.icon = data['icon'] !== undefined ? data['icon'] : <any>null;
+            this.id = data['id'] !== undefined ? data['id'] : <any>null;
+            this.name = data['name'] !== undefined ? data['name'] : <any>null;
+            this.opening_hours = data['opening_hours'] ? OpeningHoursType.fromJS(data['opening_hours']) : new OpeningHoursType();
+            if (data['photos'] && data['photos'].constructor === Array) {
                 this.photos = [];
-                for (let item of data["photos"])
+                for (let item of data['photos'])
                     this.photos.push(PhotosItemType.fromJS(item));
             }
-            this.place_id = data["place_id"] !== undefined ? data["place_id"] : <any>null;
-            this.scope = data["scope"] !== undefined ? data["scope"] : <any>null;
-            if (data["alt_ids"] && data["alt_ids"].constructor === Array) {
+            this.place_id = data['place_id'] !== undefined ? data['place_id'] : <any>null;
+            this.scope = data['scope'] !== undefined ? data['scope'] : <any>null;
+            if (data['alt_ids'] && data['alt_ids'].constructor === Array) {
                 this.alt_ids = [];
-                for (let item of data["alt_ids"])
+                for (let item of data['alt_ids'])
                     this.alt_ids.push(AltIdsItemType.fromJS(item));
             }
-            this.reference = data["reference"] !== undefined ? data["reference"] : <any>null;
-            if (data["types"] && data["types"].constructor === Array) {
+            this.reference = data['reference'] !== undefined ? data['reference'] : <any>null;
+            if (data['types'] && data['types'].constructor === Array) {
                 this.types = [];
-                for (let item of data["types"])
+                for (let item of data['types'])
                     this.types.push(item);
             }
-            this.vicinity = data["vicinity"] !== undefined ? data["vicinity"] : <any>null;
+            this.vicinity = data['vicinity'] !== undefined ? data['vicinity'] : <any>null;
         }
     }
 
@@ -630,30 +634,30 @@ export class ResultsItemType implements IResultsItemType {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["geometry"] = this.geometry ? this.geometry.toJSON() : <any>null;
-        data["icon"] = this.icon !== undefined ? this.icon : <any>null;
-        data["id"] = this.id !== undefined ? this.id : <any>null;
-        data["name"] = this.name !== undefined ? this.name : <any>null;
-        data["opening_hours"] = this.opening_hours ? this.opening_hours.toJSON() : <any>null;
+        data['geometry'] = this.geometry ? this.geometry.toJSON() : <any>null;
+        data['icon'] = this.icon !== undefined ? this.icon : <any>null;
+        data['id'] = this.id !== undefined ? this.id : <any>null;
+        data['name'] = this.name !== undefined ? this.name : <any>null;
+        data['opening_hours'] = this.opening_hours ? this.opening_hours.toJSON() : <any>null;
         if (this.photos && this.photos.constructor === Array) {
-            data["photos"] = [];
+            data['photos'] = [];
             for (let item of this.photos)
-                data["photos"].push(item.toJSON());
+                data['photos'].push(item.toJSON());
         }
-        data["place_id"] = this.place_id !== undefined ? this.place_id : <any>null;
-        data["scope"] = this.scope !== undefined ? this.scope : <any>null;
+        data['place_id'] = this.place_id !== undefined ? this.place_id : <any>null;
+        data['scope'] = this.scope !== undefined ? this.scope : <any>null;
         if (this.alt_ids && this.alt_ids.constructor === Array) {
-            data["alt_ids"] = [];
+            data['alt_ids'] = [];
             for (let item of this.alt_ids)
-                data["alt_ids"].push(item.toJSON());
+                data['alt_ids'].push(item.toJSON());
         }
-        data["reference"] = this.reference !== undefined ? this.reference : <any>null;
+        data['reference'] = this.reference !== undefined ? this.reference : <any>null;
         if (this.types && this.types.constructor === Array) {
-            data["types"] = [];
+            data['types'] = [];
             for (let item of this.types)
-                data["types"].push(item);
+                data['types'].push(item);
         }
-        data["vicinity"] = this.vicinity !== undefined ? this.vicinity : <any>null;
+        data['vicinity'] = this.vicinity !== undefined ? this.vicinity : <any>null;
         return data; 
     }
 }
@@ -688,12 +692,12 @@ export class GooglePlaceSearchResponse implements IGooglePlaceSearchResponse {
 
     init(data?: any) {
         if (data) {
-            if (data["results"] && data["results"].constructor === Array) {
+            if (data['results'] && data['results'].constructor === Array) {
                 this.results = [];
-                for (let item of data["results"])
+                for (let item of data['results'])
                     this.results.push(ResultsItemType.fromJS(item));
             }
-            this.status = data["status"] !== undefined ? data["status"] : <any>null;
+            this.status = data['status'] !== undefined ? data['status'] : <any>null;
         }
     }
 
@@ -707,11 +711,11 @@ export class GooglePlaceSearchResponse implements IGooglePlaceSearchResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (this.results && this.results.constructor === Array) {
-            data["results"] = [];
+            data['results'] = [];
             for (let item of this.results)
-                data["results"].push(item.toJSON());
+                data['results'].push(item.toJSON());
         }
-        data["status"] = this.status !== undefined ? this.status : <any>null;
+        data['status'] = this.status !== undefined ? this.status : <any>null;
         return data; 
     }
 }
@@ -737,9 +741,9 @@ export class GeoCodeLocation implements IGeoCodeLocation {
 
     init(data?: any) {
         if (data) {
-            this.lat = data["lat"] !== undefined ? data["lat"] : <any>null;
-            this.lng = data["lng"] !== undefined ? data["lng"] : <any>null;
-            this.address = data["address"] !== undefined ? data["address"] : <any>null;
+            this.lat = data['lat'] !== undefined ? data['lat'] : <any>null;
+            this.lng = data['lng'] !== undefined ? data['lng'] : <any>null;
+            this.address = data['address'] !== undefined ? data['address'] : <any>null;
         }
     }
 
@@ -752,9 +756,9 @@ export class GeoCodeLocation implements IGeoCodeLocation {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["lat"] = this.lat !== undefined ? this.lat : <any>null;
-        data["lng"] = this.lng !== undefined ? this.lng : <any>null;
-        data["address"] = this.address !== undefined ? this.address : <any>null;
+        data['lat'] = this.lat !== undefined ? this.lat : <any>null;
+        data['lng'] = this.lng !== undefined ? this.lng : <any>null;
+        data['address'] = this.address !== undefined ? this.address : <any>null;
         return data; 
     }
 }
@@ -783,11 +787,11 @@ export class Passenger implements IPassenger {
 
     init(data?: any) {
         if (data) {
-            this.user_id = data["user_id"] !== undefined ? data["user_id"] : <any>null;
-            this.first_name = data["first_name"] !== undefined ? data["first_name"] : <any>null;
-            this.last_name = data["last_name"] !== undefined ? data["last_name"] : <any>null;
-            this.image_url = data["image_url"] !== undefined ? data["image_url"] : <any>null;
-            this.rating = data["rating"] !== undefined ? data["rating"] : <any>null;
+            this.user_id = data['user_id'] !== undefined ? data['user_id'] : <any>null;
+            this.first_name = data['first_name'] !== undefined ? data['first_name'] : <any>null;
+            this.last_name = data['last_name'] !== undefined ? data['last_name'] : <any>null;
+            this.image_url = data['image_url'] !== undefined ? data['image_url'] : <any>null;
+            this.rating = data['rating'] !== undefined ? data['rating'] : <any>null;
         }
     }
 
@@ -800,11 +804,11 @@ export class Passenger implements IPassenger {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["user_id"] = this.user_id !== undefined ? this.user_id : <any>null;
-        data["first_name"] = this.first_name !== undefined ? this.first_name : <any>null;
-        data["last_name"] = this.last_name !== undefined ? this.last_name : <any>null;
-        data["image_url"] = this.image_url !== undefined ? this.image_url : <any>null;
-        data["rating"] = this.rating !== undefined ? this.rating : <any>null;
+        data['user_id'] = this.user_id !== undefined ? this.user_id : <any>null;
+        data['first_name'] = this.first_name !== undefined ? this.first_name : <any>null;
+        data['last_name'] = this.last_name !== undefined ? this.last_name : <any>null;
+        data['image_url'] = this.image_url !== undefined ? this.image_url : <any>null;
+        data['rating'] = this.rating !== undefined ? this.rating : <any>null;
         return data; 
     }
 }
@@ -836,12 +840,12 @@ export class RideResponseParams implements IRideResponseParams {
 
     init(data?: any) {
         if (data) {
-            this.origin = data["origin"] ? GeoCodeLocation.fromJS(data["origin"]) : new GeoCodeLocation();
-            this.destination = data["destination"] ? GeoCodeLocation.fromJS(data["destination"]) : new GeoCodeLocation();
-            this.passenger = data["passenger"] ? Passenger.fromJS(data["passenger"]) : new Passenger();
-            this.ride_type = data["ride_type"] !== undefined ? data["ride_type"] : <any>null;
-            this.status = data["status"] !== undefined ? data["status"] : <any>null;
-            this.ride_id = data["ride_id"] !== undefined ? data["ride_id"] : <any>null;
+            this.origin = data['origin'] ? GeoCodeLocation.fromJS(data['origin']) : new GeoCodeLocation();
+            this.destination = data['destination'] ? GeoCodeLocation.fromJS(data['destination']) : new GeoCodeLocation();
+            this.passenger = data['passenger'] ? Passenger.fromJS(data['passenger']) : new Passenger();
+            this.ride_type = data['ride_type'] !== undefined ? data['ride_type'] : <any>null;
+            this.status = data['status'] !== undefined ? data['status'] : <any>null;
+            this.ride_id = data['ride_id'] !== undefined ? data['ride_id'] : <any>null;
         }
     }
 
@@ -854,12 +858,12 @@ export class RideResponseParams implements IRideResponseParams {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["origin"] = this.origin ? this.origin.toJSON() : <any>null;
-        data["destination"] = this.destination ? this.destination.toJSON() : <any>null;
-        data["passenger"] = this.passenger ? this.passenger.toJSON() : <any>null;
-        data["ride_type"] = this.ride_type !== undefined ? this.ride_type : <any>null;
-        data["status"] = this.status !== undefined ? this.status : <any>null;
-        data["ride_id"] = this.ride_id !== undefined ? this.ride_id : <any>null;
+        data['origin'] = this.origin ? this.origin.toJSON() : <any>null;
+        data['destination'] = this.destination ? this.destination.toJSON() : <any>null;
+        data['passenger'] = this.passenger ? this.passenger.toJSON() : <any>null;
+        data['ride_type'] = this.ride_type !== undefined ? this.ride_type : <any>null;
+        data['status'] = this.status !== undefined ? this.status : <any>null;
+        data['ride_id'] = this.ride_id !== undefined ? this.ride_id : <any>null;
         return data; 
     }
 }
@@ -890,10 +894,10 @@ export class RideRequestParams implements IRideRequestParams {
 
     init(data?: any) {
         if (data) {
-            this.origin = data["origin"] ? GeoCodeLocation.fromJS(data["origin"]) : new GeoCodeLocation();
-            this.destination = data["destination"] ? GeoCodeLocation.fromJS(data["destination"]) : new GeoCodeLocation();
-            this.ride_type = data["ride_type"] !== undefined ? data["ride_type"] : <any>null;
-            this.cost_token = data["cost_token"] !== undefined ? data["cost_token"] : <any>null;
+            this.origin = data['origin'] ? GeoCodeLocation.fromJS(data['origin']) : new GeoCodeLocation();
+            this.destination = data['destination'] ? GeoCodeLocation.fromJS(data['destination']) : new GeoCodeLocation();
+            this.ride_type = data['ride_type'] !== undefined ? data['ride_type'] : <any>null;
+            this.cost_token = data['cost_token'] !== undefined ? data['cost_token'] : <any>null;
         }
     }
 
@@ -906,10 +910,10 @@ export class RideRequestParams implements IRideRequestParams {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["origin"] = this.origin ? this.origin.toJSON() : <any>null;
-        data["destination"] = this.destination ? this.destination.toJSON() : <any>null;
-        data["ride_type"] = this.ride_type !== undefined ? this.ride_type : <any>null;
-        data["cost_token"] = this.cost_token !== undefined ? this.cost_token : <any>null;
+        data['origin'] = this.origin ? this.origin.toJSON() : <any>null;
+        data['destination'] = this.destination ? this.destination.toJSON() : <any>null;
+        data['ride_type'] = this.ride_type !== undefined ? this.ride_type : <any>null;
+        data['cost_token'] = this.cost_token !== undefined ? this.cost_token : <any>null;
         return data; 
     }
 }
@@ -927,6 +931,8 @@ export class UserVm implements IUserVm {
     _id?: string | null;
     username?: string | null;
     password?: string | null;
+    lastRequest?: moment.Moment | null;
+    lastRequestRideId?: string | null;
 
     constructor(data?: IUserVm) {
         if (data) {
@@ -939,11 +945,13 @@ export class UserVm implements IUserVm {
 
     init(data?: any) {
         if (data) {
-            this.createdAt = data["createdAt"] ? moment(data["createdAt"].toString()) : <any>null;
-            this.updatedAt = data["updatedAt"] ? moment(data["updatedAt"].toString()) : <any>null;
-            this._id = data["_id"] !== undefined ? data["_id"] : <any>null;
-            this.username = data["username"] !== undefined ? data["username"] : <any>null;
-            this.password = data["password"] !== undefined ? data["password"] : <any>null;
+            this.createdAt = data['createdAt'] ? moment(data['createdAt'].toString()) : <any>null;
+            this.updatedAt = data['updatedAt'] ? moment(data['updatedAt'].toString()) : <any>null;
+            this._id = data['_id'] !== undefined ? data['_id'] : <any>null;
+            this.username = data['username'] !== undefined ? data['username'] : <any>null;
+            this.password = data['password'] !== undefined ? data['password'] : <any>null;
+            this.lastRequest = data['lastRequest'] ? moment(data['lastRequest'].toString()) : <any>null;
+            this.lastRequestRideId = data['lastRequestRideId'] !== undefined ? data['lastRequestRideId'] : <any>null;
         }
     }
 
@@ -956,11 +964,13 @@ export class UserVm implements IUserVm {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["createdAt"] = this.createdAt ? this.createdAt.toISOString() : <any>null;
-        data["updatedAt"] = this.updatedAt ? this.updatedAt.toISOString() : <any>null;
-        data["_id"] = this._id !== undefined ? this._id : <any>null;
-        data["username"] = this.username !== undefined ? this.username : <any>null;
-        data["password"] = this.password !== undefined ? this.password : <any>null;
+        data['createdAt'] = this.createdAt ? this.createdAt.toISOString() : <any>null;
+        data['updatedAt'] = this.updatedAt ? this.updatedAt.toISOString() : <any>null;
+        data['_id'] = this._id !== undefined ? this._id : <any>null;
+        data['username'] = this.username !== undefined ? this.username : <any>null;
+        data['password'] = this.password !== undefined ? this.password : <any>null;
+        data['lastRequest'] = this.lastRequest ? this.lastRequest.toISOString() : <any>null;
+        data['lastRequestRideId'] = this.lastRequestRideId !== undefined ? this.lastRequestRideId : <any>null;
         return data; 
     }
 }
@@ -971,6 +981,8 @@ export interface IUserVm {
     _id?: string | null;
     username?: string | null;
     password?: string | null;
+    lastRequest?: moment.Moment | null;
+    lastRequestRideId?: string | null;
 }
 
 export class UserRegisterParams implements IUserRegisterParams {
@@ -988,8 +1000,8 @@ export class UserRegisterParams implements IUserRegisterParams {
 
     init(data?: any) {
         if (data) {
-            this.username = data["username"] !== undefined ? data["username"] : <any>null;
-            this.password = data["password"] !== undefined ? data["password"] : <any>null;
+            this.username = data['username'] !== undefined ? data['username'] : <any>null;
+            this.password = data['password'] !== undefined ? data['password'] : <any>null;
         }
     }
 
@@ -1002,8 +1014,8 @@ export class UserRegisterParams implements IUserRegisterParams {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["username"] = this.username !== undefined ? this.username : <any>null;
-        data["password"] = this.password !== undefined ? this.password : <any>null;
+        data['username'] = this.username !== undefined ? this.username : <any>null;
+        data['password'] = this.password !== undefined ? this.password : <any>null;
         return data; 
     }
 }
@@ -1028,8 +1040,8 @@ export class UserLoginResponse implements IUserLoginResponse {
 
     init(data?: any) {
         if (data) {
-            this.authToken = data["authToken"] !== undefined ? data["authToken"] : <any>null;
-            this.user = data["user"] ? UserVm.fromJS(data["user"]) : new UserVm();
+            this.authToken = data['authToken'] !== undefined ? data['authToken'] : <any>null;
+            this.user = data['user'] ? UserVm.fromJS(data['user']) : new UserVm();
         }
     }
 
@@ -1042,8 +1054,8 @@ export class UserLoginResponse implements IUserLoginResponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["authToken"] = this.authToken !== undefined ? this.authToken : <any>null;
-        data["user"] = this.user ? this.user.toJSON() : <any>null;
+        data['authToken'] = this.authToken !== undefined ? this.authToken : <any>null;
+        data['user'] = this.user ? this.user.toJSON() : <any>null;
         return data; 
     }
 }
@@ -1068,8 +1080,8 @@ export class UserLoginParams implements IUserLoginParams {
 
     init(data?: any) {
         if (data) {
-            this.username = data["username"] !== undefined ? data["username"] : <any>null;
-            this.password = data["password"] !== undefined ? data["password"] : <any>null;
+            this.username = data['username'] !== undefined ? data['username'] : <any>null;
+            this.password = data['password'] !== undefined ? data['password'] : <any>null;
         }
     }
 
@@ -1082,8 +1094,8 @@ export class UserLoginParams implements IUserLoginParams {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["username"] = this.username !== undefined ? this.username : <any>null;
-        data["password"] = this.password !== undefined ? this.password : <any>null;
+        data['username'] = this.username !== undefined ? this.username : <any>null;
+        data['password'] = this.password !== undefined ? this.password : <any>null;
         return data; 
     }
 }
@@ -1094,12 +1106,12 @@ export interface IUserLoginParams {
 }
 
 export enum RequestStatus {
-    Pending = <any>"pending", 
-    Accepted = <any>"accepted", 
-    Arrived = <any>"arrived", 
-    PickedUp = <any>"pickedUp", 
-    DroppedOff = <any>"droppedOff", 
-    Cancelled = <any>"cancelled", 
+    Pending = <any>'pending',
+    Accepted = <any>'accepted',
+    Arrived = <any>'arrived',
+    PickedUp = <any>'pickedUp',
+    DroppedOff = <any>'droppedOff',
+    Cancelled = <any>'cancelled',
 }
 
 export class SwaggerException extends Error {
@@ -1136,14 +1148,14 @@ function throwException(message: string, status: number, response: string, heade
 function blobToText(blob: any): Observable<string> {
     return new Observable<string>((observer: any) => {
         if (!blob) {
-            observer.next("");
+            observer.next('');
             observer.complete();
         } else {
             let reader = new FileReader(); 
             reader.onload = function() { 
                 observer.next(this.result);
                 observer.complete();
-            }
+            };
             reader.readAsText(blob); 
         }
     });
