@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { Geolocation } from '@ionic-native/geolocation';
 import { AlertController, LoadingController, NavController, Platform, ToastController } from 'ionic-angular';
+import { last } from 'rxjs/operators';
 import {
     GeoCodeLocation,
     GoogleMapsClient,
@@ -60,13 +61,8 @@ export class HomePage implements OnInit {
     }
 
     ngOnInit(): void {
-        this.socketService.rideIdObs
-            .mergeMap((rideId: string) => {
-                console.log(rideId);
-                if (rideId !== '') {
-                    return this.socketService.onRideStatusUpdated(rideId);
-                }
-            })
+        this.socketService.onRideStatusUpdated()
+            .pipe(last())
             .subscribe(
                 (lyftWebhookParamsWrapper: any) => {
                     console.log(lyftWebhookParamsWrapper);
@@ -248,7 +244,6 @@ export class HomePage implements OnInit {
         ).subscribe(
             (rideResponseParams: RideResponseParams): void => {
                 console.log(rideResponseParams);
-                this.socketService.getRideId(rideResponseParams.ride_id);
                 this.toastController.create({
                     message: 'Your ride has been requested!',
                     duration: 5000,
