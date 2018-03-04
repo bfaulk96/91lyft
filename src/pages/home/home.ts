@@ -242,7 +242,7 @@ export class HomePage implements OnInit {
         ).subscribe(
             (rideResponseParams: RideResponseParams): void => {
                 console.log(rideResponseParams);
-                this.socketService.getRideId1(rideResponseParams.ride_id);
+                this.socketService.getNameSpace2(rideResponseParams.ride_id);
                 this.toastController.create({
                     message: 'Your ride has been requested!',
                     duration: 5000,

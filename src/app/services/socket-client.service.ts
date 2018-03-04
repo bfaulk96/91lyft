@@ -8,11 +8,14 @@ export class SocketClientService {
 
     private socket: SocketIOClient.Socket;
     private rideId: string;
+    private nameSpace: string;
+    private nameSpaceSub: ReplaySubject<string> = new ReplaySubject<string>();
+    nameSpaceObs = this.nameSpaceSub.asObservable();
     private rideIdSub: ReplaySubject<string> = new ReplaySubject<string>();
     rideIdObs = this.rideIdSub.asObservable();
 
     constructor() {
-        this.socket = io.connect('https://server-91lyft.herokuapp.com/');
+        // this.socket = io.connect('https://server-91lyft.herokuapp.com/');
     }
 
     emitEvent(event: string) {
@@ -27,9 +30,18 @@ export class SocketClientService {
         this.rideId = rideId;
     }
 
+    getNameSpace1(namespace: string) {
+        this.nameSpaceSub.next(namespace);
+    }
+
+    getNameSpace2(namespace: string) {
+        this.nameSpace = namespace;
+    }
+
     onRideStatusUpdated() {
+        this.socket = io(`/${this.nameSpace}`);
         return new Observable(observer => {
-            this.socket.on(`ride.status.updated_${this.rideId}`, data => {
+            this.socket.on(`ride.status.updated`, data => {
                 observer.next(data);
             });
         });
