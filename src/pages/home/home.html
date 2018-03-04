@@ -39,8 +39,8 @@
   </ion-card>
   <ng-container *ngIf="!rideAccepted">
     <ion-row align-items-center justify-content-center>
-      <button *ngIf="!platform.is('android')" ion-button large color="lyft" class="lyft-btn" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
-      <button *ngIf="platform.is('android')" ion-button large color="lyft" class="lyft-btn btn-android" (click)="callARide()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
+      <button *ngIf="!platform.is('android')" ion-button large color="lyft" class="lyft-btn" (click)="presentConfirm()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
+      <button *ngIf="platform.is('android')" ion-button large color="lyft" class="lyft-btn btn-android" (click)="presentConfirm()" [disabled]="!googleMapReady || !urgentCareReady || rideRequested">{{rideStatus}}</button>
     </ion-row>
   </ng-container>
   <ng-container *ngIf="rideAccepted">
