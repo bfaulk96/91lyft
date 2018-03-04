@@ -17,6 +17,7 @@ import { AuthenticationService } from '../services/authentication.service';
 import { MyApp } from './app';
 import { API_BASE_URL, GoogleMapsClient, LyftClient, UserClient } from './app.api';
 import { SocketClientService } from './services/socket-client.service';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 @NgModule({
     declarations: [
@@ -48,6 +49,7 @@ import { SocketClientService } from './services/socket-client.service';
         SplashScreen,
         Geolocation,
         Diagnostic,
+        InAppBrowser,
         LocationAccuracy,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         {provide: API_BASE_URL, useFactory: baseUrl},

@@ -29,4 +29,11 @@ page-login {
   .login-field {
     background-color: map-get($colors, lyftGrey);
   }
+
+  .deeplink {
+    margin-top: 20px;
+    a {
+      color: map-get($colors, lyftWhite) !important;
+    }
+  }
 }

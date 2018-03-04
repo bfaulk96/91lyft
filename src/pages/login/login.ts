@@ -3,6 +3,7 @@ import {IonicPage, NavController, ToastController} from 'ionic-angular';
 import {AuthenticationService} from "../../services/authentication.service";
 import {HomePage} from "../home/home";
 import {MyApp} from "../../app/app";
+import { InAppBrowser, InAppBrowserOptions } from "@ionic-native/in-app-browser";
 
 @IonicPage()
 @Component({
@@ -17,7 +18,8 @@ export class LoginPage implements OnInit {
 
   public constructor(private navController: NavController,
                      private authenticationService: AuthenticationService,
-                     private toastController: ToastController) {
+                     private toastController: ToastController,
+                     private inAppBrowser: InAppBrowser) {
   }
 
   ngOnInit(): void {
@@ -49,5 +51,13 @@ export class LoginPage implements OnInit {
         }).present();
       }
     );
+  }
+
+  openWebpage(url: string) {
+    const options: InAppBrowserOptions = {
+      zoom: 'no',
+      toolbarposition: 'top'
+    };
+    const browser = this.inAppBrowser.create(url, '_blank', options);
   }
 }
