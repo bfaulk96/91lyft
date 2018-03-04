@@ -62,7 +62,9 @@ export class HomePage implements OnInit {
     ngOnInit(): void {
         this.socketService.rideIdObs
             .mergeMap((rideId: string) => {
-                return this.socketService.onRideStatusUpdated(rideId);
+                if (rideId !== '') {
+                    return this.socketService.onRideStatusUpdated(rideId);
+                }
             })
             .subscribe(
                 (lyftWebhookParamsWrapper: any) => {
